@@ -27,5 +27,5 @@ public interface SItem {
     byte getStars(SkyblockPlayer player, SkyblockItem use);
     //List<SAbility> getAbilities(SkyblockPlayer player, SkyblockItem use);
     //List<Enchantment> getEnchantments(SkyblockPlayer player, SkyblockItem use);
-    SkyblockItemBookModifier getItemModifier(SkyblockPlayer player, SkyblockItem use);
+    SkyblockItemModifier getItemModifier(SkyblockPlayer player, SkyblockItem use);
 }

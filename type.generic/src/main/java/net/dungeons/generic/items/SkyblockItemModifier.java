@@ -9,14 +9,14 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SkyblockItemBookModifier {
+public class SkyblockItemModifier {
     public int hotPotatoBooks;
     public boolean artOfPeace;
     public boolean artOfWar;
     public boolean bookOfStats;
 
 
-    public SkyblockItemBookModifier copy() {
-        return new SkyblockItemBookModifier(hotPotatoBooks, artOfPeace, artOfWar, bookOfStats);
+    public SkyblockItemModifier copy() {
+        return new SkyblockItemModifier(hotPotatoBooks, artOfPeace, artOfWar, bookOfStats);
     }
 }
