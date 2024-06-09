@@ -14,9 +14,11 @@ public class SkyblockItemModifier {
     public boolean artOfPeace;
     public boolean artOfWar;
     public boolean bookOfStats;
+    public int stars;
+    public boolean recombobulated;
 
 
     public SkyblockItemModifier copy() {
-        return new SkyblockItemModifier(hotPotatoBooks, artOfPeace, artOfWar, bookOfStats);
+        return new SkyblockItemModifier(hotPotatoBooks, artOfPeace, artOfWar, bookOfStats, stars, recombobulated);
     }
 }
