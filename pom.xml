@@ -10,6 +10,9 @@
     <packaging>pom</packaging>
     <modules>
         <module>type.loader</module>
+        <module>server.dhub</module>
+        <module>type.generic</module>
+        <module>commons</module>
     </modules>
 
     <properties>
@@ -40,6 +43,21 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.32</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.tinylog/tinylog -->
+        <dependency>
+            <groupId>org.tinylog</groupId>
+            <artifactId>tinylog</artifactId>
+            <version>1.3.6</version>
+        </dependency>
+
+
     </dependencies>
 
 
