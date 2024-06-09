@@ -17,7 +17,6 @@
       <change beforePath="$PROJECT_DIR$/type.loader/gradlew.bat" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/type.loader/settings.gradle.kts" beforeDir="false" />
     </list>
-    <list id="7364c76f-37ef-4100-8f5a-bf7011131996" name="Changes by epicx" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -77,8 +76,8 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>

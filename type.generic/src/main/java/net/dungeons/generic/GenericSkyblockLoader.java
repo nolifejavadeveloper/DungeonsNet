@@ -39,6 +39,8 @@ public record GenericSkyblockLoader(ITypeLoader load) {
             /*
             * future: get version, origin server, authentication.
             * */
+
+            return player;
         });
     }
 }
