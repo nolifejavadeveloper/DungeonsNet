@@ -23,4 +23,8 @@ public class SkyblockPlayer extends Player {
     public void load() {
 
     }
+
+    public void save() {
+        super.getInventory();
+    }
 }

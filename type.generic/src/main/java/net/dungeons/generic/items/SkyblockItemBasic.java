@@ -1,4 +1,4 @@
 package net.dungeons.generic.items;
 
-public class SkyblockItemBasic implements SItem {
+public class SkyblockItemBasic implements SItem{
 }
