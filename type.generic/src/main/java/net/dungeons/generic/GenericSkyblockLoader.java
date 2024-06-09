@@ -33,6 +33,8 @@ public record GenericSkyblockLoader(ITypeLoader load) {
             Constants.instanceContainer = container;
         }
 
+        Constants.eventHandler = MinecraftServer.getGlobalEventHandler();
+
         MinecraftServer.getConnectionManager().setPlayerProvider((uuid, name, playerConnection) -> {
             SkyblockPlayer player = new SkyblockPlayer(uuid, name, playerConnection);
 
@@ -42,5 +44,7 @@ public record GenericSkyblockLoader(ITypeLoader load) {
 
             return player;
         });
+
+        Constants.eventHandler.re
     }
 }
