@@ -4,14 +4,25 @@ import com.mongodb.*;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import lombok.Getter;
+import net.dungeons.generic.event.EventManager;
 import net.dungeons.generic.player.SkyblockPlayer;
 import net.minestom.server.MinecraftServer;
+import net.minestom.server.coordinate.Pos;
+import net.minestom.server.entity.GameMode;
+import net.minestom.server.event.EventListener;
+import net.minestom.server.event.player.AsyncPlayerConfigurationEvent;
+import net.minestom.server.event.player.PlayerSpawnEvent;
+import net.minestom.server.extras.MojangAuth;
 import net.minestom.server.instance.InstanceContainer;
 import net.minestom.server.instance.InstanceManager;
 import net.minestom.server.instance.anvil.AnvilLoader;
 import org.pmw.tinylog.Logger;
+import org.reflections.Reflections;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Stream;
 
 public record GenericSkyblockLoader(ITypeLoader load) {
 
@@ -50,6 +61,26 @@ public record GenericSkyblockLoader(ITypeLoader load) {
 
             return player;
         });
+
+        EventManager.init(Constants.eventHandler);
+
+        MojangAuth.init();
+    }
+
+    public static <T> Stream<T> loopThroughPackage(String packageName, Class<T> clazz) {
+        Reflections reflections = new Reflections(packageName);
+        Set<Class<? extends T>> subTypes = reflections.getSubTypesOf(clazz);
+
+        return subTypes.stream()
+                .map(subClass -> {
+                    try {
+                        return clazz.cast(subClass.getDeclaredConstructor().newInstance());
+                    } catch (InstantiationException | IllegalAccessException | NoSuchMethodException |
+                             InvocationTargetException e) {
+                        return null;
+                    }
+                })
+                .filter(java.util.Objects::nonNull);
     }
 
     private void initMongoConnection() {
