@@ -14,6 +14,13 @@
       <version>1.18.32</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>net.minestom</groupId>
+      <artifactId>Minestom</artifactId>
+      <version>1.0</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/../libs/minestom.jar</systemPath>
+    </dependency>
   </dependencies>
   <properties>
     <maven.compiler.target>21</maven.compiler.target>
