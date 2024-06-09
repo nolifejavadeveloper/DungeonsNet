@@ -27,6 +27,11 @@
             <id>jitpack</id>
             <url>https://jitpack.io</url>
         </repository>
+        <repository>
+            <id>net.dungeons</id>
+            <name>type.generic</name>
+            <url>file:${project.basedir}/../type.generic</url>
+        </repository>
     </repositories>
 
 
@@ -59,13 +64,5 @@
 
 
     </dependencies>
-
-    <repositories>
-        <repository>
-            <id>net.dungeons</id>
-            <name>type.generic</name>
-            <url>file:${project.basedir}/../type.generic</url>
-        </repository>
-    </repositories>
 
 </project>
