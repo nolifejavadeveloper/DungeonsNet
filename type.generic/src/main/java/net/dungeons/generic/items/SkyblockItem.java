@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-public abstract class SkyblockItem implements ItemStack, SItem {
+public class SkyblockItem implements ItemStack, SItem {
 
     @Override
     public @NotNull Material material() {
@@ -58,7 +58,7 @@ public abstract class SkyblockItem implements ItemStack, SItem {
 
     @Override
     public @NotNull CompoundBinaryTag toItemNBT() {
-        return null;
+        return (CompoundBinaryTag) NBT_TYPE.write(this);
     }
 
     @Override
@@ -68,6 +68,6 @@ public abstract class SkyblockItem implements ItemStack, SItem {
 
     @Override
     public <T> @Nullable T get(@NotNull DataComponent<T> dataComponent) {
-        return null;
+
     }
 }
