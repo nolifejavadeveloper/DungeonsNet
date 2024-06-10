@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.Nullable;
 
+@Getter
+@Setter
 public class GemstoneSlot {
     public GemstoneSlotType type;
     public Gemstone gemstone;

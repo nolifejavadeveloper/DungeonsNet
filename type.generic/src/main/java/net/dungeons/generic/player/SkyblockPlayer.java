@@ -2,13 +2,20 @@ package net.dungeons.generic.player;
 
 import lombok.Getter;
 import lombok.Setter;
+import net.dungeons.generic.Constants;
 import net.dungeons.generic.level.SkyblockLevel;
+import net.dungeons.generic.pet.SkyblockPet;
 import net.dungeons.generic.rank.Rank;
 import net.dungeons.generic.skills.impl.*;
+import net.dungeons.generic.world.SkyblockLocation;
 import net.minestom.server.entity.Player;
 import net.minestom.server.network.player.PlayerConnection;
+import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
+import static com.mongodb.client.model.Filters.eq;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 @Getter
 @Setter
@@ -25,19 +32,61 @@ public class SkyblockPlayer extends Player {
     private ForagingSkill foragingSkill;
     private MiningSkill miningSkill;
     private TamingSkill tamingSkill;
+    private long coins;
+    private long bankCoins;
+    private List<SkyblockPet> pets;
+    private SkyblockLocation location;
 
     public SkyblockPlayer(@NotNull UUID uuid, @NotNull String username, @NotNull PlayerConnection playerConnection) {
         super(uuid, username, playerConnection);
 
-
+        this.skyblockLevel = new SkyblockLevel(0, this);
+        this.rank = Rank.DEFAULT;
+        this.alchemySkill = new AlchemySkill(this);
+        this.carpentrySkill = new CarpentrySkill(this);
+        this.combatSkill = new CombatSkill(this);
+        this.dungeonSkill = new DungeonSkill(this);
+        this.enchantingSkill = new EnchantingSkill(this);
+        this.farmingSkill = new FarmingSkill(this);
+        this.fishingSkill = new FishingSkill(this);
+        this.foragingSkill = new ForagingSkill(this);
+        this.miningSkill = new MiningSkill(this);
+        this.tamingSkill = new TamingSkill(this);
+        this.coins = 5_000_000;
+        this.bankCoins = 0;
+        this.location = SkyblockLocation.DUNGEON_HUB;
     }
 
 
     public void load() {
+        Document doc = Constants.playerCollection.find(eq("uuid", this.getUuid())).first();
 
+        if (doc == null)
+        {
+            this.save();
+
+            return;
+        }
     }
 
-    public void save() {
+    public void save()
+    {
+        Document document = new Document();
 
+        document.put("name", this.getUsername());
+        document.put("uuid", this.getUuid());
+        document.put("rank", rank);
+        document.put("coins", coins);
+        document.put("bankCoins", bankCoins);
+        document.put("lastLocation", location);
+
+        List<Document> petDocs = new ArrayList<>(this.pets.size());
+
+        for (int i = 0; i < this.pets.size(); i++)
+        {
+            petDocs.add(this.pets.get(i).petToDocument());
+        }
+
+        document.
     }
 }

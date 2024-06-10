@@ -35,6 +35,7 @@ public class SkyblockItem extends ItemStackImpl implements SItem {
     public List<Enchantment> enchantments;
     public List<GemstoneSlot> gemstoneSlots;
     public SkyblockItemModifier itemModifier;
+    public SItemType itemType;
 
     public SkyblockItem(Material material, int amount, DataComponentMap components) {
         super(material, amount, components);
@@ -145,5 +146,10 @@ public class SkyblockItem extends ItemStackImpl implements SItem {
     @Override
     public SkyblockItemModifier getItemModifier(SkyblockPlayer player, SkyblockItem use) {
         return this.baseItem.getItemModifier(player, this);
+    }
+
+    @Override
+    public SItemType getItemType(SkyblockPlayer player, SkyblockItem use) {
+        return this.baseItem.getItemType(player, this);
     }
 }

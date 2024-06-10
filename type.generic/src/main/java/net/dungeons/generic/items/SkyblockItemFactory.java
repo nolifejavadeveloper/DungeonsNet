@@ -5,6 +5,7 @@ import net.dungeons.generic.player.SkyblockPlayer;
 import net.dungeons.generic.reforge.IReforge;
 import net.dungeons.generic.stats.Stat;
 import net.dungeons.generic.util.Stringify;
+import net.dungeons.generic.world.SkyblockLocation;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.component.DataComponentMap;
 import net.minestom.server.item.ItemComponent;
@@ -22,7 +23,7 @@ public class SkyblockItemFactory {
     {
         DataComponentMap.Builder map = DataComponentMap.builder();
 
-        ItemComponent.LORE
+        return map.build();
     }
 
 
@@ -84,7 +85,7 @@ public class SkyblockItemFactory {
         SkyblockPlayer player = context.player;
         List<Component> components = new ArrayList<>();
 
-        boolean inDungeon = player.getLocation() == SLocation.DUNGEON;
+        boolean inDungeon = player.getLocation() == SkyblockLocation.DUNGEON;
 
         for (Stat stat : Stat.values())
         {

@@ -1,18 +1,22 @@
 package net.dungeons.generic.skills.impl;
 
 
+import net.dungeons.generic.player.SkyblockPlayer;
 import net.dungeons.generic.skills.Skill;
 
 public class CarpentrySkill extends Skill {
-    private double xp;
-
-    public CarpentrySkill(double xp) {
-        this.xp = xp;
+    public CarpentrySkill(SkyblockPlayer player) {
+        super(player);
     }
 
     @Override
     public String getSkillName() {
         return "Taming";
+    }
+
+    @Override
+    public String getKey() {
+        return "carpentry";
     }
 
     @Override

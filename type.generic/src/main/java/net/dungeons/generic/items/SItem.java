@@ -35,4 +35,5 @@ public interface SItem {
     List<Enchantment> getEnchantments(SkyblockPlayer player, SkyblockItem use);
     List<GemstoneSlot> getGemstoneSlots(SkyblockPlayer player, SkyblockItem use);
     SkyblockItemModifier getItemModifier(SkyblockPlayer player, SkyblockItem use);
+    SItemType getItemType(SkyblockPlayer player, SkyblockItem use);
 }

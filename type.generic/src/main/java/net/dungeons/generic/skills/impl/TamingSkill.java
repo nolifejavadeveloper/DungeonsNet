@@ -1,17 +1,21 @@
 package net.dungeons.generic.skills.impl;
 
+import net.dungeons.generic.player.SkyblockPlayer;
 import net.dungeons.generic.skills.Skill;
 
 public class TamingSkill extends Skill {
-    private double xp;
-
-    public TamingSkill(double xp) {
-        this.xp = xp;
+    public TamingSkill(SkyblockPlayer player) {
+        super(player);
     }
 
     @Override
     public String getSkillName() {
         return "Taming";
+    }
+
+    @Override
+    public String getKey() {
+        return "taming";
     }
 
     @Override

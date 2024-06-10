@@ -12,9 +12,7 @@ import java.util.Set;
 public class SkyblockLoader {
     public static void main(String[] args) {
         MinecraftServer server = MinecraftServer.init();
-
         Reflections reflections = new Reflections("net.dungeons.server");
-
         Set<Class<? extends ITypeLoader>> subTypes = reflections.getSubTypesOf(ITypeLoader.class);
 
         if (subTypes.isEmpty()) {

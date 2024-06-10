@@ -1,17 +1,21 @@
 package net.dungeons.generic.skills.impl;
 
+import net.dungeons.generic.player.SkyblockPlayer;
 import net.dungeons.generic.skills.Skill;
 
 public class AlchemySkill extends Skill {
-    private double xp;
-
-    public AlchemySkill(double xp) {
-        this.xp = xp;
+    public AlchemySkill(SkyblockPlayer player) {
+        super(player);
     }
 
     @Override
     public String getSkillName() {
         return "Alchemy";
+    }
+
+    @Override
+    public String getKey() {
+        return "alchemy";
     }
 
     @Override

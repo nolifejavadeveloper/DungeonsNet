@@ -1,18 +1,22 @@
 package net.dungeons.generic.skills.impl;
 
 
+import net.dungeons.generic.player.SkyblockPlayer;
 import net.dungeons.generic.skills.Skill;
 
 public class EnchantingSkill extends Skill {
-    private double xp;
-
-    public EnchantingSkill(double xp) {
-        this.xp = xp;
+    public EnchantingSkill(SkyblockPlayer player) {
+        super(player);
     }
 
     @Override
     public String getSkillName() {
         return "Mining";
+    }
+
+    @Override
+    public String getKey() {
+        return "enchanting";
     }
 
     @Override

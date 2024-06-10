@@ -7,8 +7,8 @@ import net.dungeons.generic.pet.SkyblockPet;
 import net.dungeons.generic.stats.SkyblockStats;
 
 public class GoldenDragonPet extends SkyblockPet {
-    public GoldenDragonPet(String name, double exp, ItemRarity rarity) {
-        super(name, exp);
+    public GoldenDragonPet(double exp, ItemRarity rarity) {
+        super("Golden Dragon", exp, rarity);
     }
 
     @Override
@@ -48,11 +48,6 @@ public class GoldenDragonPet extends SkyblockPet {
     public double getExperienceToLevel(int level)
     {
         return 4 * level;
-    }
-
-    @Override
-    public ItemRarity getRarity() {
-        return ;
     }
 
     @Override

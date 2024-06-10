@@ -13,8 +13,8 @@ public enum SkyblockLocation {
         this.name = name;
     }
 
-    public static SLocation getDefault()
+    public static SkyblockLocation getDefault()
     {
-        return SLocation.NULL;
+        return SkyblockLocation.NULL;
     }
 }

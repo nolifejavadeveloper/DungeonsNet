@@ -1,17 +1,21 @@
 package net.dungeons.generic.skills.impl;
 
+import net.dungeons.generic.player.SkyblockPlayer;
 import net.dungeons.generic.skills.Skill;
 
 public class FishingSkill extends Skill {
-    private double xp;
-
-    public FishingSkill(double xp) {
-        this.xp = xp;
+    public FishingSkill(SkyblockPlayer player) {
+        super(player);
     }
 
     @Override
     public String getSkillName() {
         return "Fishing";
+    }
+
+    @Override
+    public String getKey() {
+        return "fishing";
     }
 
     @Override

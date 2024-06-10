@@ -102,5 +102,7 @@ public record GenericSkyblockLoader(ITypeLoader load) {
             Logger.error("Failed to connect to MongoDB! " + e.getMessage());
         }
 
+        Constants.selectedDatabase = loader.getDatabase();
+        Constants.playerCollection = Constants.selectedDatabase.getCollection("players");
     }
 }

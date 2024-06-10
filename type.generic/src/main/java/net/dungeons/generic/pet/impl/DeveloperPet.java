@@ -1,12 +1,13 @@
 package net.dungeons.generic.pet.impl;
 
+import net.dungeons.generic.items.ItemRarity;
 import net.dungeons.generic.items.SkyblockItem;
 import net.dungeons.generic.pet.SkyblockPet;
 import net.dungeons.generic.stats.SkyblockStats;
 
 public class DeveloperPet extends SkyblockPet {
-    public DeveloperPet(String name, double exp) {
-        super(name, exp);
+    public DeveloperPet(double exp, ItemRarity rarity) {
+        super("Developer", exp, rarity);
     }
 
     @Override
