@@ -3,6 +3,10 @@ package net.dungeons.generic.scoreboard;
 import net.dungeons.generic.player.SkyblockPlayer;
 import net.dungeons.generic.util.Stringify;
 import net.kyori.adventure.text.Component;
+import net.minestom.server.entity.Player;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Set;
 
 public class BasicScoreboard extends SkyblockScoreboard {
     public BasicScoreboard(SkyblockPlayer player) {
@@ -10,6 +14,10 @@ public class BasicScoreboard extends SkyblockScoreboard {
     }
 
     @Override
+    public Component getTitle() {
+        return getScoreboardDisplayName();
+    }
+
     public Component getScoreboardDisplayName() {
         String baseText = "SKYBLOCK";
         String[] colors = {"§f§l", "§6§l", "§e§l"};
@@ -17,7 +25,7 @@ public class BasicScoreboard extends SkyblockScoreboard {
         //String endText = isGuest ? " GUEST" : "";
         String endText = "";
 
-        int counter = (int) (this.getPlayer().getAliveTicks() % 50);
+        int counter = (int) (this.getPlayer().getAliveTicks() % 100) / 2;
 
         if (counter > 0 && counter <= 8) {
             return Component.text(colors[0] + baseText.substring(0, counter - 1) +
@@ -33,12 +41,14 @@ public class BasicScoreboard extends SkyblockScoreboard {
     }
 
     @Override
-    public void init() {
-        updateBoard();
+    public void update() {
+        addLine(15,"&7 ");
+        addLine(14, "&7X: " + this.getPlayer().getPosition().x());
+        addLine(13, "&fHi mom!");
     }
 
     @Override
-    public void update() {
-        addLine("&7 ");
+    public @NotNull Set<@NotNull Player> getViewers() {
+        return Set.of();
     }
 }

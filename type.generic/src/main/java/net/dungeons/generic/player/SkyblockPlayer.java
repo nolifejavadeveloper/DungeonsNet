@@ -173,7 +173,7 @@ public class SkyblockPlayer extends Player {
         }
         else
         {
-            Constants.playerCollection.findOneAndUpdate(eq("uuid", this.getUuid().toString()), document);
+            Constants.playerCollection.replaceOne(eq("uuid", this.getUuid().toString()), document);
         }
     }
 
@@ -201,7 +201,7 @@ public class SkyblockPlayer extends Player {
     {
         if (this.scoreboard != null && this.getAliveTicks() % 2 == 0)
         {
-            this.scoreboard.updateBoard();
+            this.scoreboard.updateSidebar();
         }
     }
 }

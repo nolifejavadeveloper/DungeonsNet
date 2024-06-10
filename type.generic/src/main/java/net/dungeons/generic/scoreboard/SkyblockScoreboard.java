@@ -10,170 +10,103 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.network.packet.server.play.*;
 import net.minestom.server.scoreboard.Scoreboard;
 import net.minestom.server.scoreboard.Sidebar;
+import net.minestom.server.utils.validate.Check;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.pmw.tinylog.Logger;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public abstract class SkyblockScoreboard implements Scoreboard {
+
     private static final AtomicInteger COUNTER = new AtomicInteger();
-    private static final String PREFIX = "sb-";
+
+    /**
+     * <b>WARNING:</b> You should NOT create any scoreboards/teams with the same prefixes as those
+     */
+    private static final String SCOREBOARD_PREFIX = "sb-";
     private static final String TEAM_PREFIX = "sbt-";
-    private static final int MAX_LINES = 15;
+
+    /**
+     * Limited by the notch client, do not change
+     */
+    private static final int MAX_LINES_COUNT = 15;
+    private final Set<ScoreboardLine> lines = new CopyOnWriteArraySet<>();
     private final IntLinkedOpenHashSet availableColors = new IntLinkedOpenHashSet();
+    private final String objectiveName;
     @Getter
     private final SkyblockPlayer player;
-    @Getter
-    private List<ScoreboardLine> lines;
-    private String displayName;
-    private int index = 15;
-    private Component title;
+    private Component comp;
 
-    public SkyblockScoreboard(SkyblockPlayer player)
-    {
+
+    public SkyblockScoreboard(SkyblockPlayer player) {
+        this.objectiveName = SCOREBOARD_PREFIX + COUNTER.incrementAndGet();
         this.player = player;
-        this.lines = new ArrayList<>();
 
-        for (int i = 0; i < 16; i++)
+        // Fill available colors for entities name showed in scoreboard
+        for (int i = 0; i < 16; i++) {
             availableColors.add(i);
+        }
 
-        this.displayName = PREFIX + COUNTER.getAndIncrement();
+        comp = Component.empty();
     }
 
-    //abstract
-    public abstract Component getScoreboardDisplayName();
-    public abstract void init();
+    public abstract Component getTitle();
     public abstract void update();
 
-    //methods
-
-    public void updateBoard()
+    public Component getScoreboardTitle()
     {
-        List<ScoreboardLine> lines1 = this.lines;
+        this.comp = this.getTitle();
 
-        this.lines = new ArrayList<>();
+        return this.comp;
+    }
 
-        index = 15;
+    public void updateSidebar()
+    {
+        Component prev = this.comp;
+        Component c = this.getTitle();
+
+        List<ScoreboardLine> newLines = new ArrayList<>();
+        newLines.addAll(lines);
 
         this.update();
 
-        for (int i = 0; i < MAX_LINES; i++)
+        if (!prev.equals(c))
         {
-            ScoreboardLine line1 = null;
-            if (i < lines.size())
-                line1 = lines.get(i);
-            ScoreboardLine line2 = null;
-            if (i < lines1.size())
-                line2 = lines1.get(i);
+            this.setTitle(c);
+        }
+    }
 
-            if (line1 == null && line2 == null)
-                continue;
+    public void setTitle(@NotNull Component title) {
+        this.player.sendPacket(new ScoreboardObjectivePacket(objectiveName, (byte) 2, title,
+                ScoreboardObjectivePacket.Type.INTEGER, null));
+    }
 
-            if (line1 == null)
-                continue;
+    public void createLine(@NotNull ScoreboardLine scoreboardLine) {
+        synchronized (lines) {
+            Check.stateCondition(lines.size() >= MAX_LINES_COUNT, "You cannot have more than " + MAX_LINES_COUNT + "  lines");
+            Check.argCondition(lines.contains(scoreboardLine), "You cannot add two times the same ScoreboardLine");
 
-            if (line2 == null)
-                continue;
-
-            if (line1.equals(line2))
-            {
-                continue;
+            // Check ID duplication
+            for (ScoreboardLine line : lines) {
+                Check.argCondition(line.id.equals(scoreboardLine.id),
+                        "You cannot add two ScoreboardLine with the same id");
             }
 
-            player.sendPacket(line1.sidebarTeam.updatePrefix(line1.component));
+            // Setup line
+            scoreboardLine.retrieveName(availableColors);
+            scoreboardLine.createTeam();
+
+            // Finally add the line in cache
+            this.lines.add(scoreboardLine);
+
+            // Send to current viewers
+            player.sendPackets(scoreboardLine.sidebarTeam.getCreationPacket(), scoreboardLine.getScoreCreationPacket(objectiveName));
         }
-    }
-
-    public void show()
-    {
-        ScoreboardObjectivePacket objectPacket = this.getCreationObjectivePacket(this.getScoreboardDisplayName(), ScoreboardObjectivePacket.Type.INTEGER);
-        DisplayScoreboardPacket displayScore = this.getDisplayScoreboardPacket((byte) 1);
-
-        player.sendPacket(objectPacket);
-        player.sendPacket(displayScore);
-
-        this.init();
-
-        for (ScoreboardLine line : lines)
-        {
-            player.sendPacket(line.sidebarTeam.getCreationPacket());
-            player.sendPacket(line.getScoreDestructionPacket(this.displayName));
-        }
-    }
-
-    public void hide()
-    {
-        ScoreboardObjectivePacket obj = this.getDestructionObjectivePacket();
-        player.sendPacket(obj);
-        for (ScoreboardLine line : lines)
-        {
-            player.sendPacket(line.getScoreDestructionPacket(displayName));
-            player.sendPacket(line.sidebarTeam.getDestructionPacket());
-        }
-    }
-
-    public void setTitle(Component comp)
-    {
-        this.title = comp;
-        player.sendPacket(new ScoreboardObjectivePacket(this.displayName, (byte) 2, comp, ScoreboardObjectivePacket.Type.INTEGER, null));
-    }
-
-    public Component getTitle(Component comp)
-    {
-        return this.title;
-    }
-
-    public void addLine(String text)
-    {
-        setLine(index--, text);
-    }
-
-    public void setLine(int pos, String text)
-    {
-        Component comp = Stringify.create(text);
-        AtomicBoolean stop = new AtomicBoolean(false);
-        lines.stream().filter(c -> c.position == pos || c.getComponent().equals(comp)).findFirst().ifPresent(c -> {
-            if (c.getComponent().equals(comp))
-            {
-                if (c.position == pos)
-                {
-                    stop.set(true);
-
-                    return;
-                }
-            }
-
-            lines.remove(c);
-        });
-
-        if (stop.get())
-        {
-            return;
-        }
-
-        if (lines.size() >= MAX_LINES)
-        {
-            Logger.info("Cannot have more than 15 lines!");
-
-            return;
-        }
-
-        ScoreboardLine line = createLine(pos, text);
-        line.retrieveName(availableColors);
-        line.createTeam();
-
-        this.lines.add(line);
-
-        player.sendPackets(line.sidebarTeam.getCreationPacket(), line.getScoreCreationPacket(this.getObjectiveName()));
-    }
-
-    public ScoreboardLine createLine(int pos, String text)
-    {
-        return new ScoreboardLine(UUID.randomUUID().toString(), Stringify.create(text), pos);
     }
 
     @Override
@@ -186,45 +119,177 @@ public abstract class SkyblockScoreboard implements Scoreboard {
         return false;
     }
 
-    @Override
-    public @NotNull Set<@NotNull Player> getViewers() {
-        return Set.of();
+    public void updateLineContent(@NotNull String id, @NotNull Component content) {
+        final ScoreboardLine scoreboardLine = getLine(id);
+        if (scoreboardLine != null) {
+            scoreboardLine.refreshContent(content);
+            player.sendPacket(scoreboardLine.sidebarTeam.updatePrefix(content));
+        }
+    }
+
+    public void updateLineScore(@NotNull String id, int score) {
+        final ScoreboardLine scoreboardLine = getLine(id);
+        if (scoreboardLine != null) {
+            scoreboardLine.line = score;
+            player.sendPacket(scoreboardLine.getLineScoreUpdatePacket(objectiveName, score));
+        }
+    }
+
+    public void addLine(int pos, Component comp)
+    {
+        for (ScoreboardLine line : lines)
+        {
+            if (line.line == pos && line.content.equals(comp))
+                return;
+
+            if (line.line == pos)
+            {
+                this.removeLine(line.id);
+            }
+            else if (line.content.equals(comp))
+            {
+                line.line = pos;
+                player.sendPacket(line.getLineScoreUpdatePacket(this.objectiveName, pos));
+                return;
+            }
+        }
+
+        createLine(new ScoreboardLine(UUID.randomUUID().toString(), comp, pos));
+    }
+
+    public void addLine(int pos, String text)
+    {
+        this.addLine(pos, Stringify.create(text));
+    }
+
+    @Nullable
+    public ScoreboardLine getLine(@NotNull String id) {
+        for (ScoreboardLine line : lines) {
+            if (line.id.equals(id))
+                return line;
+        }
+        return null;
+    }
+
+    @NotNull
+    public Set<ScoreboardLine> getLines() {
+        return Collections.unmodifiableSet(lines);
+    }
+
+    public void removeLine(@NotNull String id) {
+        this.lines.removeIf(line -> {
+            if (line.id.equals(id)) {
+
+                // Remove the line for current viewers
+                player.sendPackets(line.getScoreDestructionPacket(objectiveName), line.sidebarTeam.getDestructionPacket());
+
+                line.returnName(availableColors);
+                return true;
+            }
+            return false;
+        });
+    }
+
+    public boolean show() {
+        this.updateSidebar();
+
+        ScoreboardObjectivePacket scoreboardObjectivePacket = this.getCreationObjectivePacket(this.getTitle(), ScoreboardObjectivePacket.Type.INTEGER);
+        DisplayScoreboardPacket displayScoreboardPacket = this.getDisplayScoreboardPacket((byte) 1);
+
+        player.sendPacket(scoreboardObjectivePacket); // Creative objective
+        player.sendPacket(displayScoreboardPacket); // Show sidebar scoreboard (wait for scores packet)
+
+        for (ScoreboardLine line : lines) {
+            player.sendPacket(line.sidebarTeam.getCreationPacket());
+            player.sendPacket(line.getScoreCreationPacket(objectiveName));
+        }
+
+        return true;
+    }
+
+    public boolean hide() {
+        ScoreboardObjectivePacket scoreboardObjectivePacket = this.getDestructionObjectivePacket();
+        player.sendPacket(scoreboardObjectivePacket);
+        for (ScoreboardLine line : lines) {
+            player.sendPacket(line.getScoreDestructionPacket(objectiveName)); // Is it necessary?
+            player.sendPacket(line.sidebarTeam.getDestructionPacket());
+        }
+        return true;
     }
 
     @Override
     public @NotNull String getObjectiveName() {
-        return this.displayName;
+        return this.objectiveName;
     }
 
-    public class ScoreboardLine
-    {
-        @Getter
+    /**
+     * This class is used to create a line for the sidebar.
+     */
+    public static class ScoreboardLine {
+
+        /**
+         * The identifier is used to modify the line later
+         */
         private final String id;
-        private final Component component;
-        private final String teamName;
-        private int position;
-        private int colorName;
+        /**
+         * The content for the line
+         */
+        private final Component content;
+        /**
+         * The score of the line
+         * -- GETTER --
+         *  Gets the position of the line
+         *
+         * @return the line position
+
+         */
+        @Getter
+        private int line;
+        /**
+         * The number format of the line
+         */
         private Sidebar.NumberFormat numberFormat;
+
+        private final String teamName;
+        /**
+         * The name of the score ({@code entityName}) which is essentially an identifier
+         */
+        private int colorName;
         private String entityName;
+        /**
+         * The sidebar team of the line
+         */
         private SidebarTeam sidebarTeam;
 
-        public ScoreboardLine(String id, Component comp, int line)
-        {
-            this(id, comp, line, null);
+        public ScoreboardLine(@NotNull String id, @NotNull Component content, int line) {
+            this(id, content, line, null);
         }
 
         public ScoreboardLine(@NotNull String id, @NotNull Component content, int line, @Nullable Sidebar.NumberFormat numberFormat) {
             this.id = id;
-            this.component = content;
-            this.position = line;
+            this.content = content;
+            this.line = line;
             this.numberFormat = numberFormat;
 
             this.teamName = TEAM_PREFIX + COUNTER.incrementAndGet();
         }
 
-        public Component getComponent()
-        {
-            return sidebarTeam == null ? component : sidebarTeam.getPrefix();
+        /**
+         * Gets the identifier of the line
+         *
+         * @return the line identifier
+         */
+        public @NotNull String getId() {
+            return id;
+        }
+
+        /**
+         * Gets the content of the line
+         *
+         * @return The line content
+         */
+        public @NotNull Component getContent() {
+            return sidebarTeam == null ? content : sidebarTeam.getPrefix();
         }
 
         private void retrieveName(IntLinkedOpenHashSet colors) {
@@ -233,9 +298,12 @@ public abstract class SkyblockScoreboard implements Scoreboard {
             }
         }
 
+        /**
+         * Creates a new {@link SidebarTeam}
+         */
         private void createTeam() {
             this.entityName = '§' + Integer.toHexString(colorName);
-            this.sidebarTeam = new SidebarTeam(teamName, component, Component.empty(), entityName);
+            this.sidebarTeam = new SidebarTeam(teamName, content, Component.empty(), entityName);
         }
 
         private void returnName(IntLinkedOpenHashSet colors) {
@@ -244,34 +312,52 @@ public abstract class SkyblockScoreboard implements Scoreboard {
             }
         }
 
+        /**
+         * Gets a score creation packet
+         *
+         * @param objectiveName The objective name to be updated
+         * @return a {@link UpdateScorePacket}
+         */
         private UpdateScorePacket getScoreCreationPacket(String objectiveName) {
             //TODO displayName acts as a suffix to the objective name, find way to handle elegantly
-            return new UpdateScorePacket(entityName, objectiveName, position, Component.empty(), numberFormat);
+            return new UpdateScorePacket(entityName, objectiveName, line, Component.empty(), numberFormat);
         }
 
+        /**
+         * Gets a score destruction packet
+         *
+         * @param objectiveName The objective name to be destroyed
+         * @return a {@link UpdateScorePacket}
+         */
         private ResetScorePacket getScoreDestructionPacket(String objectiveName) {
             return new ResetScorePacket(entityName, objectiveName);
         }
 
+        /**
+         * Gets a line score update packet
+         *
+         * @param objectiveName The objective name to be updated
+         * @param score         The new score
+         * @return a {@link UpdateScorePacket}
+         */
         private UpdateScorePacket getLineScoreUpdatePacket(String objectiveName, int score) {
             //TODO displayName acts as a suffix to the objective name, find way to handle elegantly
             return new UpdateScorePacket(entityName, objectiveName, score, Component.empty(), numberFormat);
         }
 
-        private void refreshComponent(Component content) {
+        /**
+         * Refresh the prefix of the {@link SidebarTeam}
+         *
+         * @param content The new content
+         */
+        private void refreshContent(Component content) {
             this.sidebarTeam.refreshPrefix(content);
         }
 
-
-
-        public boolean equals(ScoreboardLine line)
-        {
-            return line.position == this.position && line.component.equals(this.component);
-        }
     }
 
-    public class SidebarTeam
-    {
+    private static class SidebarTeam {
+
         private final String teamName;
         private Component prefix, suffix;
         private final String entityName;
@@ -298,33 +384,63 @@ public abstract class SkyblockScoreboard implements Scoreboard {
             this.entityName = entityName;
         }
 
-        private TeamsPacket getDestructionPacket() {
-            return new TeamsPacket(teamName, new TeamsPacket.RemoveTeamAction());
-        }
-
+        /**
+         * Gets a team creation packet
+         *
+         * @return a {@link TeamsPacket} which creates a new team
+         */
         private TeamsPacket getCreationPacket() {
-            final TeamsPacket.CreateTeamAction action = new TeamsPacket.CreateTeamAction(teamDisplayName, friendlyFlags,
+            final var action = new TeamsPacket.CreateTeamAction(teamDisplayName, friendlyFlags,
                     nameTagVisibility, collisionRule, teamColor, prefix, suffix, List.of(entityName));
             return new TeamsPacket(teamName, action);
         }
 
+        /**
+         * Gets a team destruction packet
+         *
+         * @return a {@link TeamsPacket} which destroyed a team
+         */
+        private TeamsPacket getDestructionPacket() {
+            return new TeamsPacket(teamName, new TeamsPacket.RemoveTeamAction());
+        }
+
+        /**
+         * Updates the prefix of the {@link SidebarTeam}
+         *
+         * @param prefix The new prefix
+         * @return a {@link TeamsPacket} with the updated prefix
+         */
         private TeamsPacket updatePrefix(Component prefix) {
-            final TeamsPacket.UpdateTeamAction action = new TeamsPacket.UpdateTeamAction(teamDisplayName, friendlyFlags,
+            final var action = new TeamsPacket.UpdateTeamAction(teamDisplayName, friendlyFlags,
                     nameTagVisibility, collisionRule, teamColor, prefix, suffix);
             return new TeamsPacket(teamName, action);
         }
 
+        /**
+         * Gets the entity name of the team
+         *
+         * @return the entity name
+         */
         private String getEntityName() {
             return entityName;
         }
 
+        /**
+         * Gets the prefix of the team
+         *
+         * @return the prefix
+         */
         private Component getPrefix() {
             return prefix;
         }
 
+        /**
+         * Refresh the prefix of the {@link SidebarTeam}
+         *
+         * @param prefix The refreshed prefix
+         */
         private void refreshPrefix(@NotNull Component prefix) {
             this.prefix = prefix;
         }
-
     }
 }
