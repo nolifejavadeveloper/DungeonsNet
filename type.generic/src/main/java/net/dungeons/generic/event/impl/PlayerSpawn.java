@@ -5,6 +5,7 @@ import net.dungeons.generic.player.SkyblockPlayer;
 import net.minestom.server.entity.GameMode;
 import net.minestom.server.event.EventListener;
 import net.minestom.server.event.player.PlayerSpawnEvent;
+import org.pmw.tinylog.Logger;
 
 
 public class PlayerSpawn implements IEvent {
@@ -13,6 +14,10 @@ public class PlayerSpawn implements IEvent {
         return EventListener.builder(PlayerSpawnEvent.class)
                 .handler(event -> {
                     SkyblockPlayer player = (SkyblockPlayer) event.getPlayer();
+
+                    player.load();
+
+                    Logger.info("Loaded data of player " + player.getName());
 
                     player.setPermissionLevel(4);
                     player.setGameMode(GameMode.CREATIVE);

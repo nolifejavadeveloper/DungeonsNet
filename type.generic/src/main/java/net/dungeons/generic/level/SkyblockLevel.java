@@ -3,10 +3,12 @@ package net.dungeons.generic.level;
 import lombok.Getter;
 import lombok.Setter;
 import net.dungeons.generic.player.SkyblockPlayer;
+import net.dungeons.generic.util.IStorable;
+import org.bson.Document;
 
 @Getter
 @Setter
-public class SkyblockLevel {
+public class SkyblockLevel implements IStorable {
     private SkyblockPlayer player;
     public SkyblockLevel(int xp, SkyblockPlayer player)
     {
@@ -14,9 +16,14 @@ public class SkyblockLevel {
         this.player = player;
     }
 
-    public SkyblockPlayer getPlayer()
+    public void save(Document doc)
     {
-        return this.player;
+        doc.put("level", this.xp);
+    }
+
+    public void load(Document doc)
+    {
+        doc.get("level", 0);
     }
 
     private int xp;

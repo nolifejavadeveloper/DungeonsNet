@@ -17,6 +17,13 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <includeSystemScope>true</includeSystemScope>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.3.0</version>
@@ -66,7 +73,6 @@
             <url>file:${project.basedir}/../</url>
         </repository>
     </repositories>
-
 
     <dependencies>
         <!--Minestom-->

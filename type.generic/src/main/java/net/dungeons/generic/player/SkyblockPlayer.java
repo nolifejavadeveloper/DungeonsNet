@@ -12,6 +12,8 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.network.player.PlayerConnection;
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
+import org.pmw.tinylog.Logger;
+
 import static com.mongodb.client.model.Filters.eq;
 
 import java.util.ArrayList;
@@ -63,10 +65,45 @@ public class SkyblockPlayer extends Player {
 
         if (doc == null)
         {
+            Logger.info("New player! " + this.getName());
+
             this.save();
 
             return;
         }
+
+        this.rank = Rank.valueOf(doc.get("rank", "DEFAULT"));
+        this.coins = (long) doc.get("coins");
+        this.bankCoins = (long) doc.get("bankCoins");
+
+        SkyblockLocation lastLocation = SkyblockLocation.valueOf(doc.get("lastLocation", "DUNGEON_HUB"));
+        //last location doesn't matter here as we have no reason to move the player to a different server.
+
+        skyblockLevel.load(doc);
+
+
+        List<Document> pets = (List<Document>) doc.get("pets", new ArrayList<Document>());
+
+        if (!pets.isEmpty())
+        {
+            for (Document document : pets)
+            {
+                this.pets.add(SkyblockPet.petFromDocument(document));
+            }
+        }
+
+        Document skillDoc = (Document) doc.get("skills");
+
+        alchemySkill.load(skillDoc);
+        carpentrySkill.load(skillDoc);
+        combatSkill.load(skillDoc);
+        dungeonSkill.load(skillDoc);
+        enchantingSkill.load(skillDoc);
+        farmingSkill.load(skillDoc);
+        fishingSkill.load(skillDoc);
+        foragingSkill.load(skillDoc);
+        miningSkill.load(skillDoc);
+        tamingSkill.load(skillDoc);
     }
 
     public void save()
@@ -80,6 +117,8 @@ public class SkyblockPlayer extends Player {
         document.put("bankCoins", bankCoins);
         document.put("lastLocation", location);
 
+        skyblockLevel.save(document);
+
         List<Document> petDocs = new ArrayList<>(this.pets.size());
 
         for (int i = 0; i < this.pets.size(); i++)
@@ -87,6 +126,21 @@ public class SkyblockPlayer extends Player {
             petDocs.add(this.pets.get(i).petToDocument());
         }
 
-        document.
+        document.put("pets", petDocs);
+
+        Document skillDoc = new Document();
+
+        alchemySkill.save(skillDoc);
+        carpentrySkill.save(skillDoc);
+        combatSkill.save(skillDoc);
+        dungeonSkill.save(skillDoc);
+        enchantingSkill.save(skillDoc);
+        farmingSkill.save(skillDoc);
+        fishingSkill.save(skillDoc);
+        foragingSkill.save(skillDoc);
+        miningSkill.save(skillDoc);
+        tamingSkill.save(skillDoc);
+
+        Constants.playerCollection.insertOne(document);
     }
 }

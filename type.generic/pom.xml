@@ -20,10 +20,9 @@
     <dependencies>
         <dependency>
             <groupId>net.minestom</groupId>
-            <artifactId>Minestom</artifactId>
+            <artifactId>dungeons</artifactId>
             <version>1.0</version>
-            <systemPath>${project.basedir}/../libs/minestom.jar</systemPath>
-            <scope>system</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.reflections</groupId>

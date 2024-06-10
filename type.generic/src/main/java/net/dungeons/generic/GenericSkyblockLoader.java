@@ -5,6 +5,7 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import lombok.Getter;
 import net.dungeons.generic.event.EventManager;
+import net.dungeons.generic.pet.SkyblockPet;
 import net.dungeons.generic.player.SkyblockPlayer;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.coordinate.Pos;
@@ -63,7 +64,7 @@ public record GenericSkyblockLoader(ITypeLoader load) {
         });
 
         EventManager.init(Constants.eventHandler);
-
+        SkyblockPet.init();
         MojangAuth.init();
     }
 

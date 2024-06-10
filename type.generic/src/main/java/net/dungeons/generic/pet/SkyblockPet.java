@@ -1,10 +1,15 @@
 package net.dungeons.generic.pet;
 
+import net.dungeons.generic.GenericSkyblockLoader;
 import net.dungeons.generic.items.ItemRarity;
 import net.dungeons.generic.items.SkyblockItem;
 import net.dungeons.generic.stats.SkyblockStats;
+import net.dungeons.generic.util.IStorable;
 import org.bson.Document;
 import org.pmw.tinylog.Logger;
+import org.reflections.Reflections;
+
+import java.util.HashMap;
 
 public abstract class SkyblockPet {
     public abstract SkyblockStats getStats();
@@ -26,15 +31,26 @@ public abstract class SkyblockPet {
         this.rarity = rarity;
     }
 
+    public Document petToDocument()
+    {
+        Document doc = new Document();
+
+        doc.put("xp", this.exp);
+        doc.put("rarity", this.rarity);
+        doc.put("petClass", this.getClass().getSimpleName());
+
+        return doc;
+    }
+
     public static SkyblockPet petFromDocument(Document document)
     {
         try
         {
-            String base = "net.dungeons.generic.pets.impl." + document.get("petClass");
             double xp = document.get("xp", 0);
             ItemRarity rarity = ItemRarity.valueOf(document.get("rarity", "COMMON"));
 
-            Class<?> clasz = Class.forName(base);
+            String key = (String) document.get("petClass");
+            Class<?> clasz = CLASS_MAP.get(key);
 
             return (SkyblockPet) clasz.getEnclosingConstructor().newInstance(xp, rarity);
         }
@@ -46,14 +62,14 @@ public abstract class SkyblockPet {
         return null;
     }
 
-    public Document petToDocument()
+    private static final HashMap<String, Class<? extends SkyblockPet>> CLASS_MAP = new HashMap<>();
+
+    public static void init()
     {
-        Document doc = new Document();
-
-        doc.put("xp", this.exp);
-        doc.put("rarity", this.rarity);
-        doc.put("petClass", this.getClass().getSimpleName());
-
-        return doc;
+        new Reflections("net.dungeons.generic.pets.impl")
+                .getSubTypesOf(SkyblockPet.class)
+                .forEach(c -> {
+                    CLASS_MAP.put(c.getSimpleName(), c);
+                });
     }
 }
