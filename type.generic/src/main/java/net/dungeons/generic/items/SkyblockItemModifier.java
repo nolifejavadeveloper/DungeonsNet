@@ -16,9 +16,11 @@ public class SkyblockItemModifier {
     public boolean bookOfStats;
     public int stars;
     public boolean recombobulated;
+    public int silex;
+    public byte scrolls;
 
 
     public SkyblockItemModifier copy() {
-        return new SkyblockItemModifier(hotPotatoBooks, artOfPeace, artOfWar, bookOfStats, stars, recombobulated);
+        return new SkyblockItemModifier(hotPotatoBooks, artOfPeace, artOfWar, bookOfStats, stars, recombobulated, silex, scrolls);
     }
 }
