@@ -1,0 +1,134 @@
+    @Override
+    public double getStat(Stat stat, SkyblockPlayer player, SkyblockItem use) {
+        return this.getStats(player, use).getStat(stat);
+    }
+
+    @Override
+    public SkyblockStats getStats(SkyblockPlayer player, SkyblockItem use) {
+        if (use == null)
+            return new SkyblockStats();
+        return use.stats;
+    }
+
+    @Override
+    public ItemRarity getItemRarity(SkyblockPlayer player, SkyblockItem use) {
+        if (use == null)
+            return ItemRarity.COMMON;
+        return use.rarity;
+    }
+
+    @Override
+    public String getTexture(SkyblockPlayer player, SkyblockItem use) {
+        if (use == null)
+            return "";
+        return use.texture;
+    }
+
+    @Override
+    public DyedItemColor leatherColor(SkyblockPlayer player, SkyblockItem use) {
+        if (use == null)
+            return null;
+        return null;
+    }
+
+    @Override
+    public boolean isDungeonized(SkyblockPlayer player, SkyblockItem use) {
+        if (use == null)
+            return false;
+        return use.dungeonized;
+    }
+
+    @Override
+    public Material getMaterial(SkyblockPlayer player, SkyblockItem use) {
+        if (use == null)
+            return Material.AIR;
+        return use.material;
+    }
+
+    @Override
+    public int getCount(SkyblockPlayer player, SkyblockItem use) {
+        if (use == null)
+            return 1;
+        return use.count;
+    }
+
+    @Override
+    public IReforge getReforge(SkyblockPlayer player, SkyblockItem use) {
+        if (use == null)
+            return null;
+        return use.reforge;
+    }
+
+    @Override
+    public String getItemID(SkyblockPlayer player, SkyblockItem use) {
+        if (use == null)
+            return "";
+        return use.itemId;
+    }
+
+    @Override
+    public List<String> getDescription(SkyblockPlayer player, SkyblockItem use) {
+        return List.of();
+    }
+
+    @Override
+    public String getItemName(SkyblockPlayer player, SkyblockItem use) {
+        if (use == null)
+            return "";
+        return use.name;
+    }
+
+    @Override
+    public boolean isUnique(SkyblockItem use) {
+        if (use == null)
+            return true;
+        return use.unique;
+    }
+
+    @Override
+    public UUID getUUID() {
+        return null;
+    }
+
+    @Override
+    public byte getStars(SkyblockPlayer player, SkyblockItem use) {
+        if (use == null)
+            return 0;
+        return use.itemModifier.getStars();
+    }
+
+    @Override
+    public List<SkyblockAbility> getAbilities(SkyblockPlayer player, SkyblockItem use) {
+        return List.of();
+    }
+
+    @Override
+    public List<Enchantment> getEnchantments(SkyblockPlayer player, SkyblockItem use) {
+        return List.of();
+    }
+
+    @Override
+    public List<GemstoneSlot> getGemstoneSlots(SkyblockPlayer player, SkyblockItem use) {
+        return List.of();
+    }
+
+    @Override
+    public SkyblockItemModifier getItemModifier(SkyblockPlayer player, SkyblockItem use) {
+        if (use == null)
+            return new SkyblockItemModifier();
+        return use.itemModifier;
+    }
+
+    @Override
+    public SItemType getItemType(SkyblockPlayer player, SkyblockItem use) {
+        if (use == null)
+            return SItemType.SWORD;
+        return use.itemType;
+    }
+
+    @Override
+    public boolean enchanted(SkyblockPlayer player, SkyblockItem use) {
+        if (use == null)
+            return true;
+        return use.enchanted;
+    }

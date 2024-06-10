@@ -1,5 +1,6 @@
 package net.dungeons.generic.items;
 
+import com.google.gson.JsonObject;
 import net.dungeons.generic.gemstone.GemstoneSlot;
 import net.dungeons.generic.player.SkyblockPlayer;
 import net.dungeons.generic.reforge.IReforge;
@@ -7,16 +8,22 @@ import net.dungeons.generic.stats.Stat;
 import net.dungeons.generic.util.Stringify;
 import net.dungeons.generic.world.SkyblockLocation;
 import net.kyori.adventure.text.Component;
+import net.minestom.server.component.DataComponent;
 import net.minestom.server.component.DataComponentMap;
+import net.minestom.server.entity.PlayerSkin;
 import net.minestom.server.item.ItemComponent;
+import net.minestom.server.item.ItemStack;
+import net.minestom.server.item.Material;
+import net.minestom.server.item.component.HeadProfile;
+import net.minestom.server.item.component.Unbreakable;
+import net.minestom.server.utils.Unit;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 public class SkyblockItemFactory {
-
-
-    public SkyblockItem createInstance(SItem sItem, SkyblockPlayer player) {
+    public static SkyblockItem createInstance(SItem sItem, SkyblockPlayer player) {
         SkyblockItem item = new SkyblockItem(sItem.getMaterial(player, null), sItem.getCount(player, null), DataComponentMap.EMPTY);
 
         item.stats = sItem.getStats(player, null);
@@ -35,14 +42,48 @@ public class SkyblockItemFactory {
         item.gemstoneSlots = sItem.getGemstoneSlots(player, null);
         item.itemModifier = sItem.getItemModifier(player, null);
         item.itemType = sItem.getItemType(player, null);
+        item.enchanted = sItem.enchanted(player, null);
+        item.color = sItem.leatherColor(player, null);
 
         return item;
     }
 
-
-    public DataComponentMap generateComponentMap(SkyblockItem item) {
+    public static DataComponentMap generateComponentMap(SkyblockItem item, SkyblockPlayer player) {
         DataComponentMap.Builder map = DataComponentMap.builder();
 
+        ItemGenerationContext context = new ItemGenerationContext(player, item);
+
+        map.set(ItemComponent.CUSTOM_NAME, createName(context));
+        map.set(ItemComponent.LORE, createLore(context));
+        map.set(ItemComponent.UNBREAKABLE, Unbreakable.DEFAULT);
+        map.set(ItemComponent.HIDE_ADDITIONAL_TOOLTIP, Unit.INSTANCE);
+
+        if (item.getMaterial(player, item) == Material.PLAYER_HEAD && !item.getTexture(player, item).equals(""))
+        {
+            JsonObject json = new JsonObject();
+            json.addProperty("isPublic", true);
+            json.addProperty("signatureRequired", false);
+
+            JsonObject object = new JsonObject();
+            object.addProperty("url", "http://textures.minecraft.net/texture/" + item.getTexture(player, item));
+            JsonObject obj = new JsonObject();
+            obj.addProperty("model", "slim");
+            object.add("metadata", obj);
+
+            JsonObject t = new JsonObject();
+            t.add("SKIN", object);
+
+            json.add("textures", t);
+
+            String texturedEncoded = Base64.getEncoder().encodeToString(json.toString().getBytes());
+
+            map.set(ItemComponent.PROFILE, new HeadProfile(new PlayerSkin(texturedEncoded, null)));
+        }
+
+        if (item.leatherColor(player, item) != null)
+        {
+            map.set(ItemComponent.DYED_COLOR, item.leatherColor(player, item));
+        }
         return map.build();
     }
 
@@ -51,7 +92,31 @@ public class SkyblockItemFactory {
 
 
     public static Component addRarityLine(ItemGenerationContext context) {
-        return Component.text(Stringify.formatString("&dTEST"));
+        String line = "";
+
+        SkyblockItem item = context.instance;
+        SkyblockPlayer player = context.player;
+
+        ItemRarity rarity = item.getItemRarity(player, item);
+        SItemType type = item.getItemType(player, item);
+
+        line += "&" + rarity.color;
+
+        SkyblockItemModifier modifiers = item.getItemModifier(player, item);
+
+        if (modifiers.isRecombobulated())
+            line += "&kD&r &" + rarity.color;
+
+        line += "&l" + rarity.name;
+
+        if (item.isDungeonized(player, item))
+            line += " DUNGEONIZED";
+        line += " " + type.name();
+
+        if (modifiers.isRecombobulated())
+            line += " &r&" + rarity.color + "&kD";
+
+        return Stringify.create(line);
     }
 
     public static Component addGemstoneLine(ItemGenerationContext context)
@@ -90,12 +155,35 @@ public class SkyblockItemFactory {
         }
 
         components.addAll(createStatLore(context));
+        if (!instance.getGemstoneSlots(player, instance).equals(List.of()))
+            components.add(addGemstoneLine(context));
+        components.add(Stringify.blankLine);
 
-        components.add(addGemstoneLine(context));
-        components.add(Component.newline());
+        if (!instance.getDescription(player, instance).equals(List.of()))
+        {
+            components.addAll(createDescriptionLore(context));
+            components.add(Stringify.blankLine);
+        }
+
         components.add(addRarityLine(context));
 
         return components;
+    }
+
+    public static List<Component> createDescriptionLore(ItemGenerationContext context)
+    {
+        SkyblockItem item = context.instance;
+        SkyblockPlayer player = context.player;
+
+        List<String> description = item.getDescription(player, item);
+        List<Component> comps = new ArrayList<>(description.size());
+
+        for (int i = 0; i < description.size(); i++)
+        {
+            comps.add(Component.text(description.get(i)));
+        }
+
+        return comps;
     }
 
     public static List<Component> createStatLore(ItemGenerationContext context)
@@ -122,36 +210,36 @@ public class SkyblockItemFactory {
         double value = instance.getStat(stat, player, null);
         double boost = 315;
 
-        builder.append("&7" + stat.name + ": " + (stat.isRed ? "&c" : "&a") + (value > 0 ? "+" : "-") + String.format("%.2f", value) + (stat.percent ? "%" : ""));
+        builder.append("&7" + stat.name + ": " + (stat.isRed ? "&c" : "&a") + (value > 0 ? "+" : "-") + String.format("%.1f", value) + (stat.percent ? "%" : ""));
 
-        if (instance.itemModifier.hotPotatoBooks > 0) {
+        if (instance.getItemModifier(player, instance).getHotPotatoBooks() > 0) {
             switch (instance.itemType)
             {
                 case SWORD:
                     if (stat == Stat.DAMAGE || stat == Stat.STRENGTH)
-                        builder.append(" &e(+" + (instance.itemModifier.hotPotatoBooks * 2) + ")");
+                        builder.append(" &e(+" + (instance.getItemModifier(player, instance).getHotPotatoBooks() * 2) + ")");
                     break;
                 case HELMET:
-                case CHEST_PLATE:
+                case CHESTPLATE:
                 case LEGGINGS:
                 case BOOTS:
                     if (stat == Stat.HEALTH || stat == Stat.DEFENSE)
-                        builder.append(" &e(+" + (instance.itemModifier.hotPotatoBooks * (stat == Stat.HEALTH ? 4 : 2)) + ")");
+                        builder.append(" &e(+" + (instance.getItemModifier(player, instance).getHotPotatoBooks() * (stat == Stat.HEALTH ? 4 : 2)) + ")");
                     break;
             }
         }
 
-        if (instance.itemModifier.artOfWar)
+        if (instance.getItemModifier(player, instance).isArtOfWar())
         {
             builder.append(" &6[+5]");
         }
 
-        if (!inDungeon)
+        if (!inDungeon && instance.isDungeonized(player, instance))
         {
             builder.append(" &7(" + (value > 0 ? "+" : "-") + String.format("%.2f", value*(boost/100)) + (stat.percent ? "%" : "") + ")");
         }
 
-        if (instance.itemModifier.artOfPeace && stat == Stat.HEALTH)
+        if (instance.getItemModifier(player, instance).isArtOfPeace() && stat == Stat.HEALTH)
         {
             builder.append(" &4[+40]");
         }
@@ -188,14 +276,14 @@ public class SkyblockItemFactory {
         return Component.text(Stringify.formatString(builder.toString()));
     }
 
-    public static String createName(ItemGenerationContext context) {
+    public static Component createName(ItemGenerationContext context) {
         SkyblockItem item = context.instance;
 
         String name = Stringify.formatString("&" + item.getItemRarity(context.player, item).color);
 
-        if (item.reforge != null)
+        if (item.getReforge(context.player, context.instance) != null)
         {
-            name += item.reforge.getReforgeName() + " ";
+            name += item.getReforge(context.player, context.instance).getReforgeName() + " ";
         }
 
         name += item.getItemName(context.player, context.instance);
@@ -206,6 +294,11 @@ public class SkyblockItemFactory {
             name += " " + StarService.getStarString(context.instance.getItemModifier(context.player, item).stars);
         }
 
-        return name;
+        return Component.text(name);
+    }
+
+    public static SkyblockItem convertNonToSkyblock(ItemStack c, SkyblockPlayer player)
+    {
+        return SkyblockItemFactory.createInstance(SkyblockItemRegistry.get(c.material().name()), player);
     }
 }

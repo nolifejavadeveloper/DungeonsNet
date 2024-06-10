@@ -14,6 +14,17 @@ import java.util.List;
 import java.util.UUID;
 
 public class SkyblockItemBasic implements SItem{
+    public String name;
+    public Material material;
+    public String id;
+
+    public SkyblockItemBasic(String name, Material material, String id)
+    {
+        this.name = name;
+        this.material = material;
+        this.id = id;
+    }
+
     @Override
     public double getStat(Stat stat, SkyblockPlayer player, SkyblockItem use) {
         return 0;
@@ -21,12 +32,12 @@ public class SkyblockItemBasic implements SItem{
 
     @Override
     public SkyblockStats getStats(SkyblockPlayer player, SkyblockItem use) {
-        return null;
+        return new SkyblockStats();
     }
 
     @Override
     public ItemRarity getItemRarity(SkyblockPlayer player, SkyblockItem use) {
-        return null;
+        return ItemRarity.COMMON;
     }
 
     @Override
@@ -46,7 +57,7 @@ public class SkyblockItemBasic implements SItem{
 
     @Override
     public Material getMaterial(SkyblockPlayer player, SkyblockItem use) {
-        return null;
+        return material;
     }
 
     @Override
@@ -61,7 +72,7 @@ public class SkyblockItemBasic implements SItem{
 
     @Override
     public String getItemID(SkyblockPlayer player, SkyblockItem use) {
-        return "";
+        return id;
     }
 
     @Override
@@ -71,7 +82,7 @@ public class SkyblockItemBasic implements SItem{
 
     @Override
     public String getItemName(SkyblockPlayer player, SkyblockItem use) {
-        return "";
+        return name;
     }
 
     @Override
@@ -106,11 +117,16 @@ public class SkyblockItemBasic implements SItem{
 
     @Override
     public SkyblockItemModifier getItemModifier(SkyblockPlayer player, SkyblockItem use) {
-        return null;
+        return new SkyblockItemModifier();
     }
 
     @Override
     public SItemType getItemType(SkyblockPlayer player, SkyblockItem use) {
-        return null;
+        return SItemType.ITEM;
+    }
+
+    @Override
+    public boolean enchanted(SkyblockPlayer player, SkyblockItem use) {
+        return false;
     }
 }

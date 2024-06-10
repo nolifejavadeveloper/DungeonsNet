@@ -1,5 +1,9 @@
 package net.dungeons.generic.commands;
 
+import net.dungeons.generic.items.SItem;
+import net.dungeons.generic.items.SkyblockItem;
+import net.dungeons.generic.items.SkyblockItemFactory;
+import net.dungeons.generic.items.SkyblockItemRegistry;
 import net.dungeons.generic.player.SkyblockPlayer;
 import net.dungeons.generic.rank.Rank;
 import net.dungeons.generic.util.Stringify;
@@ -31,6 +35,48 @@ public class AdminCommand extends Command {
                 ArgumentType.Long("amount"),
                 ArgumentType.Entity("player").onlyPlayers(true)
         );
+
+        this.addSyntax(
+                this::giveCommand,
+                ArgumentType.Literal("give"),
+                ArgumentType.String("id"),
+                ArgumentType.Integer("amount")
+        );
+        this.addSyntax(
+                this::giveCommand,
+                ArgumentType.Literal("give"),
+                ArgumentType.String("id")
+        );
+    }
+
+    private void giveCommand(CommandSender sender, CommandContext args)
+    {
+        if (!(sender instanceof Player))
+        {
+            sender.sendMessage("Execute as player please");
+            return;
+        }
+
+        SkyblockPlayer player = (SkyblockPlayer) sender;
+
+        String id = args.get("id");
+        int count = args.get("amount");
+        SItem item = SkyblockItemRegistry.get(id);
+
+        if (item == null)
+        {
+            sender.sendMessage("Item is null!");
+            return;
+        }
+
+        SkyblockItem im = SkyblockItemFactory.createInstance(item, player);
+
+        if (args.has("amount"))
+        {
+            im.amount(args.get("amount"));
+        }
+
+        player.getInventory().addItemStack(im);
     }
 
     private void setCoins(CommandSender sender, CommandContext args)

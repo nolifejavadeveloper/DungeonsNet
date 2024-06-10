@@ -14,7 +14,7 @@ public class SkyblockItemModifier {
     public boolean artOfPeace;
     public boolean artOfWar;
     public boolean bookOfStats;
-    public int stars;
+    public byte stars;
     public boolean recombobulated;
     public int silex;
     public byte scrolls;

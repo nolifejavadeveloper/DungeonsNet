@@ -190,7 +190,8 @@ public abstract class SkyblockScoreboard implements Scoreboard {
         });
     }
 
-    public boolean show() {
+    public boolean show()
+    {
         this.updateSidebar();
 
         ScoreboardObjectivePacket scoreboardObjectivePacket = this.getCreationObjectivePacket(this.getTitle(), ScoreboardObjectivePacket.Type.INTEGER);

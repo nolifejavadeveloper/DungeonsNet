@@ -1,13 +1,13 @@
 package net.dungeons.generic.items;
 
 public enum SItemType {
-    SHORT_BOW,
+    SHORTBOW,
     BOW,
     SWORD,
-    LONG_SWORD,
+    LONGSWORD,
     LEGGINGS,
     HELMET,
-    CHEST_PLATE,
+    CHESTPLATE,
     BOOTS,
     WAND,
     ITEM,

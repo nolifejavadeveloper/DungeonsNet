@@ -3,6 +3,9 @@ package net.dungeons.generic.player;
 import lombok.Getter;
 import lombok.Setter;
 import net.dungeons.generic.Constants;
+import net.dungeons.generic.items.SkyblockItem;
+import net.dungeons.generic.items.SkyblockItemFactory;
+import net.dungeons.generic.items.SkyblockItemRegistry;
 import net.dungeons.generic.level.SkyblockLevel;
 import net.dungeons.generic.pet.SkyblockPet;
 import net.dungeons.generic.rank.Rank;
@@ -13,6 +16,7 @@ import net.dungeons.generic.world.SkyblockLocation;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.entity.Player;
+import net.minestom.server.item.ItemStack;
 import net.minestom.server.network.player.PlayerConnection;
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
@@ -44,6 +48,7 @@ public class SkyblockPlayer extends Player {
     private long bankCoins;
     private List<SkyblockPet> pets;
     private SkyblockLocation location;
+    private SkyblockItem currentItem = null;
 
     public SkyblockPlayer(@NotNull UUID uuid, @NotNull String username, @NotNull PlayerConnection playerConnection) {
         super(uuid, username, playerConnection);
@@ -203,5 +208,25 @@ public class SkyblockPlayer extends Player {
         {
             this.scoreboard.updateSidebar();
         }
+
+        /*if (!(this.getInventory().getItemInMainHand() instanceof SkyblockItem) && this.getInventory().getItemInMainHand() != ItemStack.AIR)
+        {
+            this.getInventory().setItemInMainHand(SkyblockItemFactory.convertNonToSkyblock(this.getItemInMainHand(), this));
+        }
+
+        if (this.getInventory().getItemInMainHand() instanceof SkyblockItem) {
+            SkyblockItem itemInHand = (SkyblockItem) this.getItemInMainHand();
+
+            if (itemInHand != currentItem) {
+                this.onChangeHeldItem(currentItem, itemInHand);
+
+                currentItem = itemInHand;
+            }
+        }*/
+    }
+
+    public void onChangeHeldItem(SkyblockItem prev, SkyblockItem current)
+    {
+        this.getInventory().setItemInMainHand(current);
     }
 }
