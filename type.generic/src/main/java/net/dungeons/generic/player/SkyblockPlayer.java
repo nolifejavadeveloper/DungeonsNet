@@ -83,7 +83,7 @@ public class SkyblockPlayer extends Player {
         skyblockLevel.load(doc);
 
 
-        List<Document> pets = (List<Document>) doc.get("pets", new ArrayList<Document>());
+        List<Document> pets = doc.get("pets", new ArrayList<Document>());
 
         if (!pets.isEmpty())
         {

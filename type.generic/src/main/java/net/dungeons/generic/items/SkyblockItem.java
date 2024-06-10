@@ -31,7 +31,6 @@ public class SkyblockItem extends ItemStackImpl implements SItem {
     public SItem baseItem;
     public boolean unique;
     public UUID uuid;
-    public byte stars;
     public List<Enchantment> enchantments;
     public List<GemstoneSlot> gemstoneSlots;
     public SkyblockItemModifier itemModifier;

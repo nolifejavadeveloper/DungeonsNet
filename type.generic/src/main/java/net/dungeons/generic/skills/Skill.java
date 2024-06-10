@@ -41,6 +41,6 @@ public abstract class Skill implements IStorable {
 
     public void load(Document doc)
     {
-        this.xp = doc.get(this.getKey(), 0);
+        this.xp = doc.get(this.getKey(), 0d);
     }
 }

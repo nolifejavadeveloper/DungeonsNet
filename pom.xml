@@ -62,11 +62,6 @@
     </properties>
 
     <repositories>
-        <!--jitpack-->
-        <repository>
-            <id>jitpack</id>
-            <url>https://jitpack.io</url>
-        </repository>
         <repository>
             <id>net.dungeons</id>
             <name>type.generic</name>

@@ -16,11 +16,31 @@ import java.util.List;
 public class SkyblockItemFactory {
 
 
+    public SkyblockItem createInstance(SItem sItem, SkyblockPlayer player) {
+        SkyblockItem item = new SkyblockItem(sItem.getMaterial(player, null), sItem.getCount(player, null), DataComponentMap.EMPTY);
+
+        item.stats = sItem.getStats(player, null);
+        item.dungeonized = sItem.isDungeonized(player, null);
+        item.rarity = sItem.getItemRarity(player, null);
+        item.texture = sItem.getTexture(player, null);
+        item.material = sItem.getMaterial(player, null);
+        item.count = sItem.getCount(player, null);
+        item.reforge = sItem.getReforge(player, null);
+        item.itemId = sItem.getItemID(player, null);
+        item.name = sItem.getItemName(player, null);
+        item.baseItem = sItem;
+        item.unique = sItem.isUnique(null);
+        item.uuid = sItem.getUUID();
+        item.enchantments = sItem.getEnchantments(player, null);
+        item.gemstoneSlots = sItem.getGemstoneSlots(player, null);
+        item.itemModifier = sItem.getItemModifier(player, null);
+        item.itemType = sItem.getItemType(player, null);
+
+        return item;
+    }
 
 
-
-    public DataComponentMap generateComponentMap(SkyblockItem item)
-    {
+    public DataComponentMap generateComponentMap(SkyblockItem item) {
         DataComponentMap.Builder map = DataComponentMap.builder();
 
         return map.build();
@@ -30,8 +50,7 @@ public class SkyblockItemFactory {
 
 
 
-    public static Component addRarityLine(ItemGenerationContext context)
-    {
+    public static Component addRarityLine(ItemGenerationContext context) {
         return Component.text(Stringify.formatString("&dTEST"));
     }
 
@@ -182,9 +201,9 @@ public class SkyblockItemFactory {
         name += item.getItemName(context.player, context.instance);
 
         //stars
-        if (context.instance.stars >= 1 && context.instance.isDungeonized(context.player, null))
+        if (context.instance.getItemModifier(context.player, item).stars >= 1 && context.instance.isDungeonized(context.player, null))
         {
-            name += " " + StarService.getStarString(item.stars);
+            name += " " + StarService.getStarString(context.instance.getItemModifier(context.player, item).stars);
         }
 
         return name;
