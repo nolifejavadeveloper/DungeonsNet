@@ -1,6 +1,10 @@
 package net.dungeons.generic.items;
 
+import net.dungeons.generic.ability.SkyblockAbility;
+import net.dungeons.generic.enchant.Enchantment;
+import net.dungeons.generic.gemstone.GemstoneSlot;
 import net.dungeons.generic.player.SkyblockPlayer;
+import net.dungeons.generic.reforge.IReforge;
 import net.dungeons.generic.stats.SkyblockStats;
 import net.dungeons.generic.stats.Stat;
 import net.minestom.server.component.DataComponent;
@@ -21,14 +25,15 @@ public class SkyblockItem extends ItemStackImpl implements SItem {
     public String texture;
     public Material material;
     public int count;
-    //public IReforge reforge;
+    public IReforge reforge;
     public String itemId;
     public String name;
     public SItem baseItem;
     public boolean unique;
     public UUID uuid;
     public byte stars;
-    //public List<Enchantment> enchantments;
+    public List<Enchantment> enchantments;
+    public List<GemstoneSlot> gemstoneSlots;
     public SkyblockItemModifier itemModifier;
 
     public SkyblockItem(Material material, int amount, DataComponentMap components) {
@@ -87,10 +92,10 @@ public class SkyblockItem extends ItemStackImpl implements SItem {
         return this.baseItem.getCount(player, this);
     }
 
-    //@Override
-    //public IReforge getReforge(SkyblockPlayer player, SkyblockItem use) {
-        //return this.baseItem.getReforge(player, this);
-    //}
+    @Override
+    public IReforge getReforge(SkyblockPlayer player, SkyblockItem use) {
+        return this.baseItem.getReforge(player, this);
+    }
 
     @Override
     public String getItemID(SkyblockPlayer player, SkyblockItem use) {
@@ -122,15 +127,20 @@ public class SkyblockItem extends ItemStackImpl implements SItem {
         return baseItem.getStars(player, this);
     }
 
-    /*@Override
-    public List<SAbility> getAbilities(SkyblockPlayer player, SkyblockItem use) {
+    @Override
+    public List<SkyblockAbility> getAbilities(SkyblockPlayer player, SkyblockItem use) {
         return this.baseItem.getAbilities(player, this);
     }
 
     @Override
     public List<Enchantment> getEnchantments(SkyblockPlayer player, SkyblockItem use) {
         return this.baseItem.getEnchantments(player, this);
-    }*/
+    }
+
+    @Override
+    public List<GemstoneSlot> getGemstoneSlots(SkyblockPlayer player, SkyblockItem use) {
+        return this.baseItem.getGemstoneSlots(player, this);
+    }
 
     @Override
     public SkyblockItemModifier getItemModifier(SkyblockPlayer player, SkyblockItem use) {

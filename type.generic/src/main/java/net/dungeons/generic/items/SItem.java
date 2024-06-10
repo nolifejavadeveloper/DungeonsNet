@@ -1,6 +1,10 @@
 package net.dungeons.generic.items;
 
+import net.dungeons.generic.ability.SkyblockAbility;
+import net.dungeons.generic.enchant.Enchantment;
+import net.dungeons.generic.gemstone.GemstoneSlot;
 import net.dungeons.generic.player.SkyblockPlayer;
+import net.dungeons.generic.reforge.IReforge;
 import net.dungeons.generic.stats.SkyblockStats;
 import net.dungeons.generic.stats.Stat;
 import net.minestom.server.color.Color;
@@ -20,14 +24,15 @@ public interface SItem {
     boolean isDungeonized(SkyblockPlayer player, SkyblockItem use);
     Material getMaterial(SkyblockPlayer player, SkyblockItem use);
     int getCount(SkyblockPlayer player, SkyblockItem use);
-    //IReforge getReforge(SkyblockPlayer player, SkyblockItem use);
+    IReforge getReforge(SkyblockPlayer player, SkyblockItem use);
     String getItemID(SkyblockPlayer player, SkyblockItem use);
     List<String> getDescription(SkyblockPlayer player, SkyblockItem use);
     String getItemName(SkyblockPlayer player, SkyblockItem use);
     boolean isUnique(SkyblockItem use);
     UUID getUUID();
     byte getStars(SkyblockPlayer player, SkyblockItem use);
-    //List<SAbility> getAbilities(SkyblockPlayer player, SkyblockItem use);
-    //List<Enchantment> getEnchantments(SkyblockPlayer player, SkyblockItem use);
+    List<SkyblockAbility> getAbilities(SkyblockPlayer player, SkyblockItem use);
+    List<Enchantment> getEnchantments(SkyblockPlayer player, SkyblockItem use);
+    List<GemstoneSlot> getGemstoneSlots(SkyblockPlayer player, SkyblockItem use);
     SkyblockItemModifier getItemModifier(SkyblockPlayer player, SkyblockItem use);
 }
