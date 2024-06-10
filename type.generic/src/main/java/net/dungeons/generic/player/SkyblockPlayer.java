@@ -57,11 +57,12 @@ public class SkyblockPlayer extends Player {
         this.coins = 5_000_000;
         this.bankCoins = 0;
         this.location = SkyblockLocation.DUNGEON_HUB;
+        this.pets = new ArrayList<>();
     }
 
 
     public void load() {
-        Document doc = Constants.playerCollection.find(eq("uuid", this.getUuid())).first();
+        Document doc = Constants.playerCollection.find(eq("uuid", this.getUuid().toString())).first();
 
         if (doc == null)
         {
@@ -111,7 +112,7 @@ public class SkyblockPlayer extends Player {
         Document document = new Document();
 
         document.put("name", this.getUsername());
-        document.put("uuid", this.getUuid());
+        document.put("uuid", this.getUuid().toString());
         document.put("rank", rank);
         document.put("coins", coins);
         document.put("bankCoins", bankCoins);

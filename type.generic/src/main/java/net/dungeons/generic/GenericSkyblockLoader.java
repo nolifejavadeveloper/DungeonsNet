@@ -34,19 +34,25 @@ public record GenericSkyblockLoader(ITypeLoader load) {
 
     public void init(MinecraftServer server)
     {
-        initMongoConnection();
-
         GenericSkyblockLoader.server = server;
+
+        if (load == null)
+        {
+            throw new RuntimeException("ITypeLoader cannot be null!!!");
+        }
+
         GenericSkyblockLoader.loader = load;
 
-        InstanceManager manager = MinecraftServer.getInstanceManager();
+        new Thread(this::initMongoConnection).start();
 
-        String path = "./config/" + loader.getFolderName();
+        InstanceManager manager = MinecraftServer.getInstanceManager();
 
         if (!loader.getFolderName().isEmpty())
         {
             InstanceContainer container = manager.createInstanceContainer();
-            container.setChunkLoader(new AnvilLoader(path));
+            container.setChunkLoader(new AnvilLoader("./config/" + loader.getFolderName()));
+
+            Logger.info("Created instance container!");
 
             Constants.instanceContainer = container;
         }

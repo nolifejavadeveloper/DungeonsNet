@@ -17,7 +17,7 @@ public class SkyblockDungeonHub implements ITypeLoader {
 
     @Override
     public String getFolderName() {
-        return "";
+        return "dhub";
     }
 
     @Override
