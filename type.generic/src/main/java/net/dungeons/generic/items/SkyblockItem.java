@@ -3,8 +3,10 @@ package net.dungeons.generic.items;
 import net.dungeons.generic.player.SkyblockPlayer;
 import net.dungeons.generic.stats.SkyblockStats;
 import net.dungeons.generic.stats.Stat;
+import net.kyori.adventure.text.Component;
 import net.minestom.server.component.DataComponent;
 import net.minestom.server.component.DataComponentMap;
+import net.minestom.server.item.ItemComponent;
 import net.minestom.server.item.ItemStackImpl;
 import net.minestom.server.item.Material;
 import org.jetbrains.annotations.NotNull;
@@ -16,13 +18,21 @@ public class SkyblockItem extends ItemStackImpl implements SItem {
     private String name;
     private boolean isUnique;
     private UUID uuid;
+
     public SkyblockItem(Material material, int amount, DataComponentMap components) {
         super(material, amount, components);
     }
 
     public <T> SkyblockItem put(@NotNull DataComponent<T> component, T value) {
-        this.components().set(component, value);
+        this.components.set(component, value);
+
         return this;
+    }
+
+    @Override
+    public DataComponentMap components()
+    {
+        return this.components;
     }
 
     @Override

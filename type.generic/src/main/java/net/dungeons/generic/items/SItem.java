@@ -4,6 +4,7 @@ import net.dungeons.generic.player.SkyblockPlayer;
 import net.dungeons.generic.stats.SkyblockStats;
 import net.dungeons.generic.stats.Stat;
 import net.minestom.server.item.Material;
+import net.minestom.server.item.component.DyedItemColor;
 
 import java.util.List;
 import java.util.UUID;
@@ -14,7 +15,7 @@ public interface SItem {
     //**data**
     ItemRarity getItemRarity(SkyblockPlayer player, SkyblockItem use);
     String getTexture(SkyblockPlayer player, SkyblockItem use);
-    Color leatherColor(SkyblockPlayer player, SkyblockItem use);
+    DyedItemColor leatherColor(SkyblockPlayer player, SkyblockItem use);
     boolean isDungeonized(SkyblockPlayer player, SkyblockItem use);
     Material getMaterial(SkyblockPlayer player, SkyblockItem use);
     int getCount(SkyblockPlayer player, SkyblockItem use);
