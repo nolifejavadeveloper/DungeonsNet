@@ -105,7 +105,7 @@ public record GenericSkyblockLoader(ITypeLoader load) {
         try {
             Constants.mongoClient = MongoClients.create(settings);
             Logger.info("Successfully connected to MongoDB!");
-        }catch (MongoException e) {
+        } catch (MongoException e) {
             Logger.error("Failed to connect to MongoDB! " + e.getMessage());
         }
 

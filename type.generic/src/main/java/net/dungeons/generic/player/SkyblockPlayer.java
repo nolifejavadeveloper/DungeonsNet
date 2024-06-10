@@ -142,6 +142,8 @@ public class SkyblockPlayer extends Player {
         miningSkill.save(skillDoc);
         tamingSkill.save(skillDoc);
 
+        document.put("skills", skillDoc);
+
         Constants.playerCollection.insertOne(document);
     }
 }
