@@ -8,6 +8,8 @@ import net.dungeons.generic.reforge.IReforge;
 import net.dungeons.generic.stats.SkyblockStats;
 import net.dungeons.generic.stats.Stat;
 import net.minestom.server.color.Color;
+import net.minestom.server.item.ItemStack;
+import net.minestom.server.item.ItemStackImpl;
 import net.minestom.server.item.Material;
 import net.minestom.server.item.component.DyedItemColor;
 
@@ -37,4 +39,11 @@ public interface SItem {
     SkyblockItemModifier getItemModifier(SkyblockPlayer player, SkyblockItem use);
     SItemType getItemType(SkyblockPlayer player, SkyblockItem use);
     boolean enchanted(SkyblockPlayer player, SkyblockItem use);
+
+    static SkyblockItem cast(ItemStack item)
+    {
+        if (item instanceof ItemStackImpl impl && impl instanceof SkyblockItem)
+            return (SkyblockItem) impl;
+        return null;
+    }
 }

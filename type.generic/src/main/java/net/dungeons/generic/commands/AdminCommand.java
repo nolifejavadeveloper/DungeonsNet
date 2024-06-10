@@ -12,6 +12,7 @@ import net.minestom.server.command.builder.Command;
 import net.minestom.server.command.builder.CommandContext;
 import net.minestom.server.command.builder.arguments.ArgumentType;
 import net.minestom.server.entity.Player;
+import net.minestom.server.item.ItemStackImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -47,6 +48,30 @@ public class AdminCommand extends Command {
                 ArgumentType.Literal("give"),
                 ArgumentType.String("id")
         );
+
+        this.addSyntax(
+                this::check,
+                ArgumentType.Literal("check")
+        );
+    }
+
+    private void check(CommandSender sender, CommandContext args)
+    {
+        if (!(sender instanceof SkyblockPlayer))
+            return;
+
+        SkyblockPlayer player = (SkyblockPlayer) sender;
+        SkyblockItem handItem = SItem.cast(player.getItemInMainHand());
+
+        if (handItem != null)
+        {
+            player.sendMessage("It is a SkyblockItem");
+        }
+
+        else
+        {
+            player.sendMessage("false");
+        }
     }
 
     private void giveCommand(CommandSender sender, CommandContext args)

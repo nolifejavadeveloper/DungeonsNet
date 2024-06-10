@@ -10,10 +10,7 @@ import net.dungeons.generic.stats.Stat;
 import net.minestom.server.component.DataComponent;
 import net.minestom.server.component.DataComponentMap;
 import net.minestom.server.entity.Player;
-import net.minestom.server.item.ItemComponent;
-import net.minestom.server.item.ItemStack;
-import net.minestom.server.item.ItemStackImpl;
-import net.minestom.server.item.Material;
+import net.minestom.server.item.*;
 import net.minestom.server.item.component.DyedItemColor;
 import net.minestom.server.network.NetworkBuffer;
 import org.jetbrains.annotations.NotNull;
@@ -21,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.UUID;
 
-public class SkyblockItem extends ItemStackImpl implements SItem {
+public class SkyblockItem extends ItemStackImpl implements SItem, IComponentable {
     public SkyblockStats stats;
     public boolean dungeonized;
     public ItemRarity rarity;
@@ -56,13 +53,11 @@ public class SkyblockItem extends ItemStackImpl implements SItem {
         return this;
     }
 
-    @Override
     public DataComponentMap components()
     {
         return SkyblockItemFactory.generateComponentMap(this, null);
     }
 
-    @Override
     public DataComponentMap components(Player player)
     {
         return SkyblockItemFactory.generateComponentMap(this, (SkyblockPlayer) player);

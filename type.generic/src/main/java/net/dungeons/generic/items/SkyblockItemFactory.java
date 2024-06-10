@@ -84,6 +84,7 @@ public class SkyblockItemFactory {
         {
             map.set(ItemComponent.DYED_COLOR, item.leatherColor(player, item));
         }
+
         return map.build();
     }
 

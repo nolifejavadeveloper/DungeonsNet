@@ -88,6 +88,11 @@ public record GenericSkyblockLoader(ITypeLoader load) {
         EventManager.init(Constants.eventHandler);
         SkyblockPet.init();
         MojangAuth.init();
+
+
+
+        //testings
+
     }
 
     public static <T> Stream<T> loopThroughPackage(String packageName, Class<T> clazz) {

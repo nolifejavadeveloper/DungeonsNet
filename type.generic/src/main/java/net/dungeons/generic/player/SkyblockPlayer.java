@@ -3,6 +3,7 @@ package net.dungeons.generic.player;
 import lombok.Getter;
 import lombok.Setter;
 import net.dungeons.generic.Constants;
+import net.dungeons.generic.items.SItem;
 import net.dungeons.generic.items.SkyblockItem;
 import net.dungeons.generic.items.SkyblockItemFactory;
 import net.dungeons.generic.items.SkyblockItemRegistry;
@@ -17,6 +18,7 @@ import net.kyori.adventure.text.Component;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.entity.Player;
 import net.minestom.server.item.ItemStack;
+import net.minestom.server.network.packet.server.play.SetSlotPacket;
 import net.minestom.server.network.player.PlayerConnection;
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
@@ -209,24 +211,31 @@ public class SkyblockPlayer extends Player {
             this.scoreboard.updateSidebar();
         }
 
-        /*if (!(this.getInventory().getItemInMainHand() instanceof SkyblockItem) && this.getInventory().getItemInMainHand() != ItemStack.AIR)
+        SkyblockItem handItem = SItem.cast(this.getInventory().getItemInMainHand());
+
+        if (handItem == null && this.getInventory().getItemInMainHand() != ItemStack.AIR)
         {
-            this.getInventory().setItemInMainHand(SkyblockItemFactory.convertNonToSkyblock(this.getItemInMainHand(), this));
+            SkyblockItem item = SkyblockItemFactory.convertNonToSkyblock(this.getItemInMainHand(), this);
+
+            //this.setItemInMainHand(item);
+
+            System.out.println("converted item (simple name is " + this.getItemInMainHand().getClass().getSimpleName() + ")");
+            //this.getInventory().sendSlotRefresh(this.getHeldSlot(), item);
         }
 
-        if (this.getInventory().getItemInMainHand() instanceof SkyblockItem) {
-            SkyblockItem itemInHand = (SkyblockItem) this.getItemInMainHand();
+        if (handItem != null) {
+            if (handItem != currentItem) {
+                this.onChangeHeldItem(this.getHeldSlot(), currentItem, handItem);
 
-            if (itemInHand != currentItem) {
-                this.onChangeHeldItem(currentItem, itemInHand);
-
-                currentItem = itemInHand;
+                currentItem = handItem;
             }
-        }*/
+        }
     }
 
-    public void onChangeHeldItem(SkyblockItem prev, SkyblockItem current)
+    public void onChangeHeldItem(short slot, SkyblockItem prev, SkyblockItem current)
     {
-        this.getInventory().setItemInMainHand(current);
+        System.out.println("Changed item");
+
+        this.getInventory().setItemStack(slot, current);
     }
 }
