@@ -1,10 +1,16 @@
 package net.dungeons.generic.items;
 
 import net.dungeons.generic.gemstone.GemstoneSlot;
+import net.dungeons.generic.player.SkyblockPlayer;
+import net.dungeons.generic.reforge.IReforge;
+import net.dungeons.generic.stats.Stat;
 import net.dungeons.generic.util.Stringify;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.component.DataComponentMap;
 import net.minestom.server.item.ItemComponent;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SkyblockItemFactory {
 
@@ -12,7 +18,8 @@ public class SkyblockItemFactory {
 
 
 
-    public DataComponentMap generateComponentMap(SkyblockItem item) {
+    public DataComponentMap generateComponentMap(SkyblockItem item)
+    {
         DataComponentMap.Builder map = DataComponentMap.builder();
 
         ItemComponent.LORE
@@ -22,28 +29,30 @@ public class SkyblockItemFactory {
 
 
 
-    public static Component addRarityLine(ItemGenerationContext context) {
+    public static Component addRarityLine(ItemGenerationContext context)
+    {
         return Component.text(Stringify.formatString("&dTEST"));
     }
 
-    public static Component addGemstoneLine(ItemGenerationContext context) {
-        SItemInstance instance = context.instance;
-        DungeonsPlayer player = context.player;
+    public static Component addGemstoneLine(ItemGenerationContext context)
+    {
+        SkyblockItem instance = context.instance;
+        SkyblockPlayer player = context.player;
 
-        List<GemstoneSlot> slots = instance.get(player, null);
+        List<GemstoneSlot> slots = instance.getGemstoneSlots(player, null);
         StringBuilder builder = new StringBuilder();
 
         for (int i = 0; i < slots.size(); i++)
         {
             GemstoneSlot slot = slots.get(i);
 
-            if (slot.getGemstone() == null)
+            if (slot.gemstone == null)
             {
-                builder.append("&7[" + slot.getSlotType().icon + "] ");
+                builder.append("&7[" + slot.type.icon + "] ");
                 continue;
             }
 
-            builder.append("&" + slot.getGemstone().getQuality().color + "[&" + slot.getGemstone().getType().color + slot.getSlotType().icon + "&" + slot.getGemstone().getQuality().color + "] ");
+            builder.append("&" + slot.gemstone.getQuality().color + "[&" + slot.gemstone.getType().color + slot.type.icon + "&" + slot.gemstone.getQuality().color + "] ");
         }
 
         return Component.text(Stringify.formatString(builder.toString()));
@@ -51,8 +60,8 @@ public class SkyblockItemFactory {
 
     public static List<Component> createLore(ItemGenerationContext context)
     {
-        SItemInstance instance = context.instance;
-        DungeonsPlayer player = context.player;
+        SkyblockItem instance = context.instance;
+        SkyblockPlayer player = context.player;
         List<Component> components = new ArrayList<>();
 
         if (instance.isDungeonized(player, null))
@@ -71,8 +80,8 @@ public class SkyblockItemFactory {
 
     public static List<Component> createStatLore(ItemGenerationContext context)
     {
-        SItemInstance instance = context.instance;
-        DungeonsPlayer player = context.player;
+        SkyblockItem instance = context.instance;
+        SkyblockPlayer player = context.player;
         List<Component> components = new ArrayList<>();
 
         boolean inDungeon = player.getLocation() == SLocation.DUNGEON;
@@ -86,7 +95,7 @@ public class SkyblockItemFactory {
         return components;
     }
 
-    public static Component createStatLine(Stat stat, SItemInstance instance, DungeonsPlayer player, boolean inDungeon)
+    public static Component createStatLine(Stat stat, SkyblockItem instance, SkyblockPlayer player, boolean inDungeon)
     {
         StringBuilder builder = new StringBuilder();
 
