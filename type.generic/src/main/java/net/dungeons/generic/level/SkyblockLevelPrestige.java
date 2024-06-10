@@ -1,5 +1,8 @@
 package net.dungeons.generic.level;
 
+import lombok.Getter;
+
+@Getter
 public enum SkyblockLevelPrestige {
     GREY('7', 0),
     WHITE('f', 4000),
@@ -15,15 +18,15 @@ public enum SkyblockLevelPrestige {
     RED('c', 44000),
     DARK_RED('4', 48000);
 
-    private final char c;
+    private final char color;
     private final int xpRequired;
 
     SkyblockLevelPrestige(char c, int xpRequired) {
-        this.c = c;
+        this.color = c;
         this.xpRequired = xpRequired;
     }
 
-    public static SkyblockLevelPrestige getByXp(int xp) {
+    public static SkyblockLevelPrestige find(int xp) {
         SkyblockLevelPrestige previous = SkyblockLevelPrestige.GREY;
         for (SkyblockLevelPrestige current : values()) {
             if (current.xpRequired > xp) {
@@ -34,6 +37,4 @@ public enum SkyblockLevelPrestige {
 
         return SkyblockLevelPrestige.GREY;
     }
-
-
 }

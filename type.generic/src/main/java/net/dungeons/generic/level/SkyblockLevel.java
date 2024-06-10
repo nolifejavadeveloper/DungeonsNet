@@ -10,10 +10,14 @@ import org.bson.Document;
 @Setter
 public class SkyblockLevel implements IStorable {
     private SkyblockPlayer player;
+    private int xp;
+    private SkyblockLevelPrestige prestige;
     public SkyblockLevel(int xp, SkyblockPlayer player)
     {
         this.xp = xp;
         this.player = player;
+
+        this.prestige = SkyblockLevelPrestige.find(xp);
     }
 
     public void save(Document doc)
@@ -23,16 +27,25 @@ public class SkyblockLevel implements IStorable {
 
     public void load(Document doc)
     {
-        doc.get("level", 0);
+        setXp(doc.get("level", 0));
     }
-
-    private int xp;
-    private SkyblockLevelPrestige prestige;
     public int getLevel() {
         return (xp - (xp % 100)) / 100;
     }
 
     public int getExperience() {
         return xp % 100;
+    }
+
+    public void setXp(int xp)
+    {
+        this.xp = xp;
+
+        prestige = SkyblockLevelPrestige.find(this.xp);
+    }
+
+    public String getFormatted()
+    {
+        return "&8[&" + this.prestige.getColor() + this.getLevel() + "&8]";
     }
 }

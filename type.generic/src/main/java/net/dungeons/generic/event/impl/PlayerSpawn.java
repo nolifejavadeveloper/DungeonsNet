@@ -1,5 +1,6 @@
 package net.dungeons.generic.event.impl;
 
+import net.dungeons.generic.GenericSkyblockLoader;
 import net.dungeons.generic.event.IEvent;
 import net.dungeons.generic.player.SkyblockPlayer;
 import net.minestom.server.entity.GameMode;
@@ -21,6 +22,8 @@ public class PlayerSpawn implements IEvent {
 
                     player.setPermissionLevel(4);
                     player.setGameMode(GameMode.CREATIVE);
+
+                    player.setScoreboard(GenericSkyblockLoader.loader.makeScoreboard(player));
 
                     player.getInstance().loadChunk(player.getRespawnPoint()).join();
                 }).build();

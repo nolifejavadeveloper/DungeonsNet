@@ -6,8 +6,12 @@ import net.dungeons.generic.Constants;
 import net.dungeons.generic.level.SkyblockLevel;
 import net.dungeons.generic.pet.SkyblockPet;
 import net.dungeons.generic.rank.Rank;
+import net.dungeons.generic.scoreboard.SkyblockScoreboard;
 import net.dungeons.generic.skills.impl.*;
+import net.dungeons.generic.util.Stringify;
 import net.dungeons.generic.world.SkyblockLocation;
+import net.kyori.adventure.text.Component;
+import net.minestom.server.MinecraftServer;
 import net.minestom.server.entity.Player;
 import net.minestom.server.network.player.PlayerConnection;
 import org.bson.Document;
@@ -24,6 +28,7 @@ import java.util.UUID;
 public class SkyblockPlayer extends Player {
     private SkyblockLevel skyblockLevel;
     private Rank rank;
+    private PreferredCustomization customization;
     private AlchemySkill alchemySkill;
     private CarpentrySkill carpentrySkill;
     private CombatSkill combatSkill;
@@ -34,6 +39,7 @@ public class SkyblockPlayer extends Player {
     private ForagingSkill foragingSkill;
     private MiningSkill miningSkill;
     private TamingSkill tamingSkill;
+    private SkyblockScoreboard scoreboard;
     private long coins;
     private long bankCoins;
     private List<SkyblockPet> pets;
@@ -44,6 +50,7 @@ public class SkyblockPlayer extends Player {
 
         this.skyblockLevel = new SkyblockLevel(0, this);
         this.rank = Rank.DEFAULT;
+        this.customization = new PreferredCustomization('6');
         this.alchemySkill = new AlchemySkill(this);
         this.carpentrySkill = new CarpentrySkill(this);
         this.combatSkill = new CombatSkill(this);
@@ -58,17 +65,17 @@ public class SkyblockPlayer extends Player {
         this.bankCoins = 0;
         this.location = SkyblockLocation.DUNGEON_HUB;
         this.pets = new ArrayList<>();
+        this.scoreboard = null;
     }
-
 
     public void load() {
         Document doc = Constants.playerCollection.find(eq("uuid", this.getUuid().toString())).first();
 
         if (doc == null)
         {
-            Logger.info("New player! " + this.getName());
+            Logger.info("New player! " + this.getUsername());
 
-            this.save();
+            this.save(true);
 
             return;
         }
@@ -76,6 +83,9 @@ public class SkyblockPlayer extends Player {
         this.rank = Rank.valueOf(doc.get("rank", "DEFAULT"));
         this.coins = (long) doc.get("coins");
         this.bankCoins = (long) doc.get("bankCoins");
+
+        Document custom = (Document) doc.get("customization");
+        this.customization.load(custom);
 
         SkyblockLocation lastLocation = SkyblockLocation.valueOf(doc.get("lastLocation", "DUNGEON_HUB"));
         //last location doesn't matter here as we have no reason to move the player to a different server.
@@ -109,6 +119,11 @@ public class SkyblockPlayer extends Player {
 
     public void save()
     {
+        this.save(false);
+    }
+
+    public void save(boolean first)
+    {
         Document document = new Document();
 
         document.put("name", this.getUsername());
@@ -117,6 +132,13 @@ public class SkyblockPlayer extends Player {
         document.put("coins", coins);
         document.put("bankCoins", bankCoins);
         document.put("lastLocation", location);
+
+        Document custom = new Document();
+        {
+            customization.save(custom);
+
+            document.put("customization", custom);
+        }
 
         skyblockLevel.save(document);
 
@@ -130,20 +152,56 @@ public class SkyblockPlayer extends Player {
         document.put("pets", petDocs);
 
         Document skillDoc = new Document();
+        {
+            alchemySkill.save(skillDoc);
+            carpentrySkill.save(skillDoc);
+            combatSkill.save(skillDoc);
+            dungeonSkill.save(skillDoc);
+            enchantingSkill.save(skillDoc);
+            farmingSkill.save(skillDoc);
+            fishingSkill.save(skillDoc);
+            foragingSkill.save(skillDoc);
+            miningSkill.save(skillDoc);
+            tamingSkill.save(skillDoc);
 
-        alchemySkill.save(skillDoc);
-        carpentrySkill.save(skillDoc);
-        combatSkill.save(skillDoc);
-        dungeonSkill.save(skillDoc);
-        enchantingSkill.save(skillDoc);
-        farmingSkill.save(skillDoc);
-        fishingSkill.save(skillDoc);
-        foragingSkill.save(skillDoc);
-        miningSkill.save(skillDoc);
-        tamingSkill.save(skillDoc);
+            document.put("skills", skillDoc);
+        }
 
-        document.put("skills", skillDoc);
+        if (first)
+        {
+            Constants.playerCollection.insertOne(document);
+        }
+        else
+        {
+            Constants.playerCollection.findOneAndUpdate(eq("uuid", this.getUuid().toString()), document);
+        }
+    }
 
-        Constants.playerCollection.insertOne(document);
+    public void processChatMessage(String message)
+    {
+        String line = Stringify.formatString(skyblockLevel.getFormatted()
+        + " " + rank.getDisplay(this.customization) + this.getUsername() + "&" + rank.getChatColor() + ": ");
+
+        line += message;
+
+        for (Player player : MinecraftServer.getConnectionManager().getOnlinePlayers())
+        {
+            player.sendMessage(Component.text(line));
+        }
+    }
+
+    public void showScoreboard(SkyblockScoreboard scoreboard)
+    {
+        this.scoreboard = scoreboard;
+
+        scoreboard.show();
+    }
+
+    public void tick()
+    {
+        if (this.scoreboard != null && this.getAliveTicks() % 2 == 0)
+        {
+            this.scoreboard.updateBoard();
+        }
     }
 }

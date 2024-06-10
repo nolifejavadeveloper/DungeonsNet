@@ -7,7 +7,9 @@ import lombok.Getter;
 import net.dungeons.generic.event.EventManager;
 import net.dungeons.generic.pet.SkyblockPet;
 import net.dungeons.generic.player.SkyblockPlayer;
+import net.dungeons.generic.util.Stringify;
 import net.minestom.server.MinecraftServer;
+import net.minestom.server.command.builder.Command;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.GameMode;
 import net.minestom.server.event.EventListener;
@@ -30,7 +32,7 @@ public record GenericSkyblockLoader(ITypeLoader load) {
     @Getter
     private static MinecraftServer server;
     @Getter
-    private static ITypeLoader loader;
+    public static ITypeLoader loader;
 
     public void init(MinecraftServer server)
     {
@@ -69,6 +71,18 @@ public record GenericSkyblockLoader(ITypeLoader load) {
             return player;
         });
 
+        //commands
+
+        MinecraftServer.getCommandManager().setUnknownCommandCallback((p, c) -> {
+            p.sendMessage(Stringify.create("&cInvalid command \"" + c + "\""));
+        });
+
+        loopThroughPackage("net.dungeons.generic.commands", Command.class)
+                .forEach(c -> {
+                    MinecraftServer.getCommandManager().register(c);
+                });
+
+        //etc
         EventManager.init(Constants.eventHandler);
         SkyblockPet.init();
         MojangAuth.init();
@@ -91,7 +105,7 @@ public record GenericSkyblockLoader(ITypeLoader load) {
     }
 
     private void initMongoConnection() {
-        String connString = "mongodb+srv://server:Pr6xfWQu42blUb0Z@dungeonsnet.joqyrao.mongodb.net/?retryWrites=true&w=majority&appName=DungeonsNet";
+        String connString = "mongodb+srv://dungeonsnet:dungeonsisfun@dungeons.td7qa5q.mongodb.net/?retryWrites=true&w=majority&appName=Dungeons";
         Logger.info("Connecting to MongoDB...");
 
         ServerApi serverApi = ServerApi.builder()
