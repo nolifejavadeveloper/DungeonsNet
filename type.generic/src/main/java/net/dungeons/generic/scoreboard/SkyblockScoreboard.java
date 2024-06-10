@@ -162,6 +162,12 @@ public abstract class SkyblockScoreboard implements Scoreboard {
         this.addLine(pos, Stringify.create(text));
     }
 
+    public void clear()
+    {
+        for (ScoreboardLine line : lines)
+            this.removeLine(line.id);
+    }
+
     @Nullable
     public ScoreboardLine getLine(@NotNull String id) {
         for (ScoreboardLine line : lines) {
