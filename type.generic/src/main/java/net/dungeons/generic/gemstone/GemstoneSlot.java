@@ -7,7 +7,6 @@ import org.jetbrains.annotations.Nullable;
 @Setter
 public class GemstoneSlot {
     private GemstoneSlotType type;
-
     private Gemstone gemstone;
     public GemstoneSlot(GemstoneSlotType type, @Nullable Gemstone applied) {
         this.type = type;

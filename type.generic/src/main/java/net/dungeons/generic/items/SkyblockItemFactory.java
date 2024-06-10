@@ -1,5 +1,6 @@
 package net.dungeons.generic.items;
 
+import net.dungeons.generic.gemstone.GemstoneSlot;
 import net.dungeons.generic.util.Stringify;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.component.DataComponentMap;
@@ -11,8 +12,7 @@ public class SkyblockItemFactory {
 
 
 
-    public DataComponentMap generateComponentMap(SkyblockItem item)
-    {
+    public DataComponentMap generateComponentMap(SkyblockItem item) {
         DataComponentMap.Builder map = DataComponentMap.builder();
 
         ItemComponent.LORE
@@ -22,17 +22,15 @@ public class SkyblockItemFactory {
 
 
 
-    public static Component addRarityLine(ItemGenerationContext context)
-    {
+    public static Component addRarityLine(ItemGenerationContext context) {
         return Component.text(Stringify.formatString("&dTEST"));
     }
 
-    public static Component addGemstoneLine(ItemGenerationContext context)
-    {
+    public static Component addGemstoneLine(ItemGenerationContext context) {
         SItemInstance instance = context.instance;
         DungeonsPlayer player = context.player;
 
-        List<GemstoneSlot> slots = instance.getGemstoneSlots(player, null);
+        List<GemstoneSlot> slots = instance.get(player, null);
         StringBuilder builder = new StringBuilder();
 
         for (int i = 0; i < slots.size(); i++)

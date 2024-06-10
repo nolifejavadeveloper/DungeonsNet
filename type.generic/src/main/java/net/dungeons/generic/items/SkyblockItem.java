@@ -48,42 +48,42 @@ public class SkyblockItem extends ItemStackImpl implements SItem {
     }
 
     @Override
-    public double getStat(Stat stat, SkyblockPlayer player, SkyblockItem use) {
+    public double getStat(Stat stat, SkyblockPlayer player, SkyblockItem ignored) {
         return this.getStats(player, this).getStat(stat);
     }
 
     @Override
-    public SkyblockStats getStats(SkyblockPlayer player, SkyblockItem use) {
+    public SkyblockStats getStats(SkyblockPlayer player, SkyblockItem ignored) {
         return this.baseItem.getStats(player, this);
     }
 
     @Override
-    public ItemRarity getItemRarity(SkyblockPlayer player, SkyblockItem use) {
+    public ItemRarity getItemRarity(SkyblockPlayer player, SkyblockItem ignored) {
         return this.baseItem.getItemRarity(player, this);
     }
 
     @Override
-    public String getTexture(SkyblockPlayer player, SkyblockItem use) {
+    public String getTexture(SkyblockPlayer player, SkyblockItem ignored) {
         return this.baseItem.getTexture(player, this);
     }
 
     @Override
-    public DyedItemColor leatherColor(SkyblockPlayer player, SkyblockItem use) {
+    public DyedItemColor leatherColor(SkyblockPlayer player, SkyblockItem ignored) {
         return this.baseItem.leatherColor(player, this);
     }
 
     @Override
-    public boolean isDungeonized(SkyblockPlayer player, SkyblockItem use) {
+    public boolean isDungeonized(SkyblockPlayer player, SkyblockItem ignored) {
         return this.baseItem.isDungeonized(player, this);
     }
 
     @Override
-    public Material getMaterial(SkyblockPlayer player, SkyblockItem use) {
+    public Material getMaterial(SkyblockPlayer player, SkyblockItem ignored) {
         return this.baseItem.getMaterial(player, this);
     }
 
     @Override
-    public int getCount(SkyblockPlayer player, SkyblockItem use) {
+    public int getCount(SkyblockPlayer player, SkyblockItem ignored) {
         return this.baseItem.getCount(player, this);
     }
 
@@ -93,22 +93,22 @@ public class SkyblockItem extends ItemStackImpl implements SItem {
     //}
 
     @Override
-    public String getItemID(SkyblockPlayer player, SkyblockItem use) {
+    public String getItemID(SkyblockPlayer player, SkyblockItem ignored) {
         return this.baseItem.getItemID(player, this);
     }
 
     @Override
-    public List<String> getDescription(SkyblockPlayer player, SkyblockItem use) {
+    public List<String> getDescription(SkyblockPlayer player, SkyblockItem ignored) {
         return this.baseItem.getDescription(player, this);
     }
 
     @Override
-    public String getItemName(SkyblockPlayer player, SkyblockItem use) {
+    public String getItemName(SkyblockPlayer player, SkyblockItem ignored) {
         return this.baseItem.getItemName(player, this);
     }
 
     @Override
-    public boolean isUnique(SkyblockItem use) {
+    public boolean isUnique(SkyblockItem ignored) {
         return baseItem.isUnique(this);
     }
 
@@ -118,22 +118,22 @@ public class SkyblockItem extends ItemStackImpl implements SItem {
     }
 
     @Override
-    public byte getStars(SkyblockPlayer player, SkyblockItem use) {
+    public byte getStars(SkyblockPlayer player, SkyblockItem ignored) {
         return baseItem.getStars(player, this);
     }
 
     /*@Override
-    public List<SAbility> getAbilities(SkyblockPlayer player, SkyblockItem use) {
+    public List<SAbility> getAbilities(SkyblockPlayer player, SkyblockItem ignored) {
         return this.baseItem.getAbilities(player, this);
     }
 
     @Override
-    public List<Enchantment> getEnchantments(SkyblockPlayer player, SkyblockItem use) {
+    public List<Enchantment> getEnchantments(SkyblockPlayer player, SkyblockItem ignored) {
         return this.baseItem.getEnchantments(player, this);
     }*/
 
     @Override
-    public SkyblockItemModifier getItemModifier(SkyblockPlayer player, SkyblockItem use) {
+    public SkyblockItemModifier getItemModifier(SkyblockPlayer player, SkyblockItem ignored) {
         return this.baseItem.getItemModifier(player, this);
     }
 }

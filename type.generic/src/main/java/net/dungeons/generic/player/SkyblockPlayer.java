@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.dungeons.generic.level.SkyblockLevel;
 import net.dungeons.generic.rank.Rank;
+import net.dungeons.generic.skills.impl.AlchemySkill;
 import net.minestom.server.entity.Player;
 import net.minestom.server.network.player.PlayerConnection;
 import org.jetbrains.annotations.NotNull;
@@ -25,6 +26,6 @@ public class SkyblockPlayer extends Player {
     }
 
     public void save() {
-        super.getInventory();
+
     }
 }
