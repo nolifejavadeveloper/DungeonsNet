@@ -38,7 +38,7 @@
                         <id>install-external</id>
                         <phase>clean</phase>
                         <configuration>
-                            <file>${basedir}/../libs/minestom.jar</file>
+                            <file>${parent.basedir}/libs/minestom.jar</file>
                             <groupId>net.minestom</groupId>
                             <artifactId>dungeons</artifactId>
                             <version>1.0</version>
